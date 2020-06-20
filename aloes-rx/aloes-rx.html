@@ -1,0 +1,83 @@
+<script type="text/javascript">
+  const COLLECTIONS = {
+    DEVICE: 'Device',
+    SENSOR: 'Sensor',
+    MEASUREMENT: 'Measurement',
+  };
+
+  RED.nodes.registerType('aloes-rx', {
+    category: 'network',
+    color: '#77d1bf',
+    defaults: {
+      name: { value: '' },
+      aloesNetwork: { type: 'aloes-network', required: true },
+      qos: { value: '0' },
+      // topic: {
+      //   value: '',
+      //   required: true,
+      //   validate: RED.validators.regex(/^(#$|(\+|[^+#]*)(\/(\+|[^+#]*))*(\/(\+|#|[^+#]*))?$)/),
+      // },
+      datatype: { value: 'auto', required: true },
+      collection: {
+        value: '',
+        validate: function (collection) {
+          return collection ? Object.values(COLLECTIONS).includes(collection) : true;
+        },
+      },
+    },
+    inputs: 0,
+    outputs: 1,
+    outputLabels: 'instance',
+    icon: 'aloes-icon-min.svg',
+    label: function () {
+      return this.name || 'aloes-rx';
+    },
+    labelStyle: function () {
+      return this.name ? 'node_label_italic' : '';
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="aloes-rx">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="aloes.label.name"></span></label>
+    <input type="text" id="node-input-name" data-i18n="[placeholder]aloes.label.name">
+  </div>
+    <div class="form-row">
+      <label for="node-input-aloesNetwork"><i class="fa fa-globe"></i> <span data-i18n="aloes.label.aloesNetwork"></span></label>
+      <input type="text" id="node-input-aloesNetwork">
+  </div>
+  <!-- <div class="form-row">
+      <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="aloes.label.topic"></span></label>
+      <input type="text" id="node-input-topic" data-i18n="[placeholder]aloes.label.topic">
+  </div> -->
+  <div class="form-row">
+      <label for="node-input-qos"><i class="fa fa-empire"></i> <span data-i18n="aloes.label.qos"></span></label>
+      <select id="node-input-qos" style="width:125px !important">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+      </select>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-datatype"><i class="fa fa-sign-out"></i> <span data-i18n="aloes.label.output"></span></label>
+    <select id="node-input-datatype" style="width:70%;">
+      <option value="auto" data-i18n="aloes.output.auto"></option>
+      <option value="buffer" data-i18n="aloes.output.buffer"></option>
+      <option value="utf8" data-i18n="aloes.output.string"></option>
+      <option value="json" data-i18n="aloes.output.json"></option>
+      <option value="base64" data-i18n="aloes.output.base64"></option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-collection"><i class="icon-tag"></i> <span data-i18n="aloes.label.collection"></label>
+    <select id="node-input-collection" placeholder="#"style="width:70%;">
+      <option value=""></option>
+      <option value="Device" data-i18n="aloes.collection.device"></option>
+      <option value="Sensor" data-i18n="aloes.collection.sensor"></option>
+      <option value="Measurement" data-i18n="aloes.collection.measurement"></option>
+    </select>
+  </div>
+</script>

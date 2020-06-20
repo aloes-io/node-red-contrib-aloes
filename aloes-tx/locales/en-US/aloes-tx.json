@@ -1,0 +1,26 @@
+{
+  "aloes": {
+    "label": {
+      "name": "Name",
+      "example": "localhost",
+      "aloesNetwork": "Aloes network",
+      "topic": "Topic",
+      "qos": "Quality of signal",
+      "output": "Output type",
+      "collection": "Aloes Collection"
+    },
+    "retain": "Retain",
+    "tip": "Tip: Leave topic, qos or retain blank if you want to set them via msg properties.",
+    "true": "True",
+    "false": "False",
+    "errors": {
+      "invalid-topic": "Invalid topic",
+      "invalid-collection": "Invalid collection",
+      "invalid-user-id": "Invalid user id",
+      "invalid-json-parse": "Invalid JSON parsing",
+      "invalid-json-string": "Invalid JSON string",
+      "invalid-not-defined": "Input not defined",
+      "invalid-missing": "Missing Aloes config"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+
+<script type="text/html" data-help-name="aloes-rx">
+  <p>A node to receive user data from Aloes Broker</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>aloesNetwork <span class="property-type">object</span></dt>
+    <dd> Declare your Aloes instance configuration </dd>
+
+    <dt class="optional">QOS <span class="property-type">number</span></dt>
+    <dd>Set the MQTT quality of signal</dd>
+
+    <dt class="optional">collection <span class="property-type">string</span></dt>
+    <dd>Restrict the data models the node should listen to (e.g : Device, Sensor, ...)</dd>
+
+  </dl>
+
+  <h3>Outputs</h3>
+  <ol class="node-ports">
+    <li>Instance
+      <dl class="message-properties">
+        <dt>payload <span class="property-type">string | buffer</span></dt>
+        <dd>Device | Sensor | Measurement instance</dd>
+
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Aloes client topic </dd>
+
+        <dt>instanceName <span class="property-type">string</span></dt>
+        <dd>Key under which the instance is identified in the globalContext</dd>
+
+        <dt>collection <span class="property-type">string</span></dt>
+        <dd>Type to the instance</dd>
+
+        <dt>qos <span class="property-type">number</span> </dt>
+        <dd>0, fire and forget - 1, at least once - 2, once and once only.</dd>
+
+        <dt>retain <span class="property-type">boolean</span></dt>
+        <dd>true indicates the message was retained and may be old.</dd>
+      </dl>
+    </li>
+  </ol>
+
+  <h3>Details</h3>
+  The subscription topic can include MQTT wildcards, + for one level, # for multiple levels.</p>
+  <p>This node requires a connection to a MQTT broker to be configured. This is configured by clicking
+  the pencil icon.</p>
+  <p>Several MQTT nodes (in or out) can share the same broker connection if required.</p>
+
+  <h3>References</h3>
+  <ul>
+    <li><a>GitHub</a> - the nodes github repository</li>
+    <li><a>GitHub</a> - aloes-handlers library</li>
+  </ul>
+</script>

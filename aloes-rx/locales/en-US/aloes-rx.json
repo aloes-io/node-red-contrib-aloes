@@ -1,0 +1,33 @@
+{
+  "aloes": {
+    "label": {
+      "name": "Name",
+      "example": "localhost",
+      "aloesNetwork": "Aloes network",
+      "topic": "Topic",
+      "qos": "Quality of signal",
+      "output": "Output type",
+      "collection": "Aloes Collection"
+    },
+    "output": {
+      "auto": "Auto",
+      "buffer": "Buffer",
+      "string": "String",
+      "json": "JSON",
+      "base64": "Base64"
+    },
+    "collection": {
+      "device": "Device",
+      "application": "Application",
+      "sensor": "Sensor",
+      "measurement": "Measurement"
+    },
+    "errors": {
+      "invalid-topic": "Invalid topic",
+      "invalid-json-parse": "Invalid JSON parsing",
+      "invalid-json-string": "Invalid JSON string",
+      "invalid-not-defined": "Input not defined",
+      "invalid-missing": "Missing Aloes config"
+    }
+  }
+}
