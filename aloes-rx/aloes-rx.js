@@ -1,7 +1,7 @@
 module.exports = function (RED) {
   const isUtf8 = require('is-utf8');
   const { CONNECTION_TYPES } = require('../constants.js');
-  const { getInstanceName, isValidCollection } = require('../helpers');
+  const { getInstanceName, isValidCollection, isValidMethod } = require('../helpers');
 
   function AloesRxNode(config) {
     RED.nodes.createNode(this, config);
@@ -30,10 +30,18 @@ module.exports = function (RED) {
     function messageCallback(topic, payload, packet) {
       const parts = topic.split('/');
 
-      const collection = parts[1];
-      if (!isValidCollection(collection)) {
+      const [userId, collection, method] = parts;
+      if (!collection) {
+        node.error(RED._('aloes.errors.missing-collection'));
+        return;
+      } else if (!isValidCollection(collection)) {
+        node.error(RED._('aloes.errors.invalid-collection'));
+        return;
+      } else if (!isValidMethod(method)) {
+        node.error(RED._('aloes.errors.invalid-method'));
         return;
       }
+
       const type = collection.toLowerCase();
 
       if (node.datatype === 'buffer') {
@@ -85,7 +93,9 @@ module.exports = function (RED) {
       const instanceName = getInstanceName[type](payload);
 
       const msg = {
+        userId,
         collection,
+        method,
         instanceName,
         topic,
         payload,
@@ -99,7 +109,7 @@ module.exports = function (RED) {
     }
 
     // node.aloesConn.on('error', () => {
-    //   console.log('node.aloesConn.error');
+    //   node.error('node.aloesConn.error');
     // });
 
     node.aloesConn.on('ready', () => {

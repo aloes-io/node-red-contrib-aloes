@@ -55,7 +55,9 @@ module.exports = function (RED) {
         });
 
         const message = {
+          userId,
           collection: COLLECTIONS.SENSOR,
+          method,
           instanceName,
           payload: sensor,
           topic,
@@ -78,10 +80,12 @@ module.exports = function (RED) {
         const instanceName = getDeviceName(device);
         node.log(`parseDevice ${instanceName}`);
 
+        const method = METHODS.HEAD; // "PUT",
+
         const topic = getAloesTopic({
           userId,
           collection: COLLECTIONS.DEVICE,
-          method: METHODS.HEAD, // "PUT",
+          method,
           instanceId: device.id,
         });
 
@@ -96,7 +100,9 @@ module.exports = function (RED) {
         }
 
         const message = {
+          userId,
           collection: COLLECTIONS.DEVICE,
+          method,
           instanceName,
           payload: device,
           topic,

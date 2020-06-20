@@ -24,6 +24,9 @@
     },
     "errors": {
       "invalid-topic": "Invalid topic",
+      "missing-collection": "Missing collection in topic",
+      "invalid-collection": "Invalid collection in topic",
+      "invalid-method": "Invalid method in topic",
       "invalid-json-parse": "Invalid JSON parsing",
       "invalid-json-string": "Invalid JSON string",
       "invalid-not-defined": "Input not defined",

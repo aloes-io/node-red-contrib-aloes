@@ -1,6 +1,6 @@
 module.exports = function (RED) {
   const { CONNECTION_TYPES } = require('../constants.js');
-  const { isValidCollection } = require('../helpers.js');
+  const { isValidCollection, isValidMethod } = require('../helpers.js');
 
   function AloesTxNode(config) {
     RED.nodes.createNode(this, config);
@@ -22,7 +22,7 @@ module.exports = function (RED) {
     this.status({ fill: 'red', shape: 'ring', text: 'node-red:common.status.disconnected' });
 
     // node.aloesConn.on('error', (e) => {
-    //   console.log()
+    //   node.error()
     // });
 
     node.aloesConn.on('ready', () => {
@@ -51,7 +51,7 @@ module.exports = function (RED) {
           if (chk.test(msg.topic)) {
             node.warn(RED._('aloes.errors.invalid-topic'));
           }
-          const [userId, collection] = msg.topic.split('/');
+          const [userId, collection, method] = msg.topic.split('/');
 
           if (!this.aloesConn.userId || !userId || this.aloesConn.userId !== userId) {
             node.warn(RED._('aloes.errors.invalid-user-id'));
@@ -59,7 +59,11 @@ module.exports = function (RED) {
           } else if (!isValidCollection(collection)) {
             node.warn(RED._('aloes.errors.invalid-collection'));
             done();
+          } else if (isValidMethod(method)) {
+            node.warn(RED._('aloes.errors.invalid-method'));
+            done();
           } else {
+            this.log(`publish to ${msg.topic}`);
             this.aloesConn.publish(msg, done);
           }
         } else {

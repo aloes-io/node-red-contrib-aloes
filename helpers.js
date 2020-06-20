@@ -1,28 +1,18 @@
 const { COLLECTIONS, METHODS } = require('./constants');
 
 const getFromGlobalContext = (node, key) => {
+  // todo get storage type from env ?
   return new Promise((resolve, reject) => {
     const globalContext = node.context().global;
-    globalContext.get(key, (error, res) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(res);
-      }
-    });
+    globalContext.get(key, (error, value) => (error ? reject(error) : resolve(value)));
   });
 };
 
 const setToGlobalContext = (node, key, value) => {
+  // todo get storage type from env ?
   return new Promise((resolve, reject) => {
     const globalContext = node.context().global;
-    globalContext.set(key, value, (error) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
+    globalContext.set(key, value, (error) => (error ? reject(error) : resolve(value)));
   });
 };
 
@@ -39,31 +29,32 @@ const getAloesTopic = ({ userId, method, collection, instanceId = null }) => {
   return null;
 };
 
-const getDeviceName = (device) => device.name.toLowerCase();
+const getDeviceName = (device) => device.name.replace(' ', '-').toLowerCase();
 
 const getSensorName = (sensor) =>
-  `${sensor.name.toLowerCase()}-${sensor.type}-${sensor.nativeNodeId || 0}-${
-    sensor.nativeSensorId
-  }`;
+  `${sensor.type}-${sensor.nativeNodeId || 0}-${sensor.nativeSensorId}`;
 
 const getMeasurementName = (measurement) =>
   `${measurement.type}-${measurement.sensorNodeId || 0}-${measurement.nativeSensorId}`;
 
 const getInstanceName = {
-  device: (device) => getDeviceName(device),
-  sensor: (sensor) => getSensorName(sensor),
-  measurement: (measurement) => getMeasurementName(measurement),
+  [COLLECTIONS.DEVICE.toLowerCase()]: (device) => getDeviceName(device),
+  [COLLECTIONS.SENSOR.toLowerCase()]: (sensor) => getSensorName(sensor),
+  [COLLECTIONS.MEASUREMENT.toLowerCase()]: (measurement) => getMeasurementName(measurement),
 };
 
 const sendTo = {
-  device: (send, message) => send([message, null, null]),
-  sensor: (send, message) => send([null, message, null]),
-  measurement: (send, message) => send([null, null, message]),
+  [COLLECTIONS.DEVICE.toLowerCase()]: (send, message) => send([message, null, null]),
+  [COLLECTIONS.SENSOR.toLowerCase()]: (send, message) => send([null, message, null]),
+  [COLLECTIONS.MEASUREMENT.toLowerCase()]: (send, message) => send([null, null, message]),
 };
 
 const saveInstance = {
-  device: async (deviceName, device) => setToGlobalContext(node, `device-${deviceName}`, device),
-  sensor: async (sensorName, sensor) => setToGlobalContext(node, `sensor-${sensorName}`, sensor),
+  [COLLECTIONS.DEVICE.toLowerCase()]: async (node, storageKey, device) =>
+    setToGlobalContext(node, `device-${storageKey}`, device),
+  [COLLECTIONS.SENSOR.toLowerCase()]: async (node, storageKey, sensor) =>
+    setToGlobalContext(node, `sensor-${storageKey}`, sensor),
+  [COLLECTIONS.MEASUREMENT.toLowerCase()]: async (node, storageKey, measurement) => null,
 };
 
 module.exports = {

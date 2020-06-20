@@ -16,6 +16,7 @@
     "errors": {
       "invalid-topic": "Invalid topic",
       "invalid-collection": "Invalid collection",
+      "invalid-method": "Invalid method",
       "invalid-user-id": "Invalid user id",
       "invalid-json-parse": "Invalid JSON parsing",
       "invalid-json-string": "Invalid JSON string",
