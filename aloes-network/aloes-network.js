@@ -1,100 +1,14 @@
 module.exports = function (RED) {
   const axios = require('axios');
   const mqtt = require('mqtt');
-  // const util = require('util');
-  const HttpsProxyAgent = require('https-proxy-agent');
-  const url = require('url');
   const { CONNECTION_TYPES, LOGIN_ROUTE } = require('../constants.js');
-  const { getFromGlobalContext, setToGlobalContext } = require('../helpers.js');
-
-  function matchTopic(ts, t) {
-    if (ts === '#') {
-      return true;
-    } else if (ts.startsWith('$share')) {
-      /* The following allows shared subscriptions (as in MQTT v5)
-       http://docs.oasis-open.org/mqtt/mqtt/v5.0/cs02/mqtt-v5.0-cs02.html#_Toc514345522
-       4.8.2 describes shares like:
-       $share/{ShareName}/{filter}
-       $share is a literal string that marks the Topic Filter as being a Shared Subscription Topic Filter.
-       {ShareName} is a character string that does not include "/", "+" or "#"
-       {filter} The remainder of the string has the same syntax and semantics as a Topic Filter in a non-shared subscription. Refer to section 4.7.
-    */
-      ts = ts.replace(/^\$share\/[^#+/]+\/(.*)/g, '$1');
-    }
-    const re = new RegExp(
-      '^' +
-        ts
-          .replace(/([\[\]\?\(\)\\\\$\^\*\.|])/g, '\\$1')
-          .replace(/\+/g, '[^/]+')
-          .replace(/\/#$/, '(/.*)?') +
-        '$',
-    );
-    return re.test(t);
-  }
-
-  function getServerUrl(
-    httpHost = 'localhost',
-    httpPort = null,
-    httpApiRoot = '/api',
-    prox,
-    noprox,
-    httpSecure = false,
-  ) {
-    let serverUrl;
-    let httpOptions;
-    // if the broker may be ws:// or wss:// or even tcp://
-    if (httpHost.indexOf('://') > -1) {
-      serverUrl = httpHost;
-      if (serverUrl.indexOf('https://') > -1 || serverUrl.indexOf('http://') > -1) {
-        // check if proxy is set in env
-        let noproxy;
-        if (noprox) {
-          for (let i = 0; i < noprox.length; i += 1) {
-            if (serverUrl.indexOf(noprox[i].trim()) !== -1) {
-              noproxy = true;
-            }
-          }
-        }
-        if (prox && !noproxy) {
-          const parsedUrl = url.parse(serverUrl);
-          const proxyOpts = url.parse(prox);
-          proxyOpts.secureEndpoint = parsedUrl.protocol ? parsedUrl.protocol === 'https:' : true;
-          const agent = new HttpsProxyAgent(proxyOpts);
-          httpOptions = {
-            agent,
-          };
-        }
-      }
-    } else {
-      if (httpSecure) {
-        serverUrl = 'https://';
-      } else {
-        serverUrl = 'http://';
-      }
-      if (httpHost !== '') {
-        //Check for an IPv6 address
-        if (
-          /(?:^|(?<=\s))(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(?=\s|$)/.test(
-            httpHost,
-          )
-        ) {
-          serverUrl = serverUrl + '[' + httpHost + ']:';
-        } else {
-          serverUrl = serverUrl + httpHost + ':';
-        }
-        // port now defaults to 8000 if unset.
-        if (!httpPort) {
-          serverUrl = serverUrl + '8000';
-        } else {
-          serverUrl = serverUrl + httpPort;
-        }
-      } else {
-        serverUrl = serverUrl + 'localhost:8000';
-      }
-    }
-    serverUrl += httpApiRoot;
-    return { serverUrl, httpOptions };
-  }
+  const {
+    getBrokerUrl,
+    getFromGlobalContext,
+    getServerUrl,
+    matchTopic,
+    setToGlobalContext,
+  } = require('../helpers.js');
 
   const interceptResErrors = (err) => {
     try {
@@ -115,66 +29,6 @@ module.exports = function (RED) {
     }
   };
 
-  function getBrokerUrl(mqttHost = 'localhost', mqttPort = null, prox, noprox, mqttSecure = false) {
-    let brokerUrl;
-    let wsOptions;
-    // if the broker may be ws:// or wss:// or even tcp://
-    if (mqttHost.indexOf('://') > -1) {
-      brokerUrl = mqttHost;
-      // Only for ws or wss, check if proxy env var for additional configuration
-      if (brokerUrl.indexOf('wss://') > -1 || brokerUrl.indexOf('ws://') > -1) {
-        // check if proxy is set in env
-        let noproxy;
-        if (noprox) {
-          for (let i = 0; i < noprox.length; i += 1) {
-            if (brokerUrl.indexOf(noprox[i].trim()) !== -1) {
-              noproxy = true;
-            }
-          }
-        }
-        if (prox && !noproxy) {
-          const parsedUrl = url.parse(brokerUrl);
-          const proxyOpts = url.parse(prox);
-          // true for wss
-          proxyOpts.secureEndpoint = parsedUrl.protocol ? parsedUrl.protocol === 'wss:' : true;
-          // Set Agent for wsOption in MQTT
-          const agent = new HttpsProxyAgent(proxyOpts);
-          wsOptions = {
-            agent,
-          };
-        }
-      }
-    } else {
-      // construct the std mqtt:// url
-      if (mqttSecure) {
-        brokerUrl = 'mqtts://';
-      } else {
-        brokerUrl = 'mqtt://';
-      }
-      if (mqttHost !== '') {
-        //Check for an IPv6 address
-        if (
-          /(?:^|(?<=\s))(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(?=\s|$)/.test(
-            mqttHost,
-          )
-        ) {
-          brokerUrl = brokerUrl + '[' + mqttHost + ']:';
-        } else {
-          brokerUrl = brokerUrl + mqttHost + ':';
-        }
-        // port now defaults to 1883 if unset.
-        if (!mqttPort) {
-          brokerUrl = brokerUrl + '1883';
-        } else {
-          brokerUrl = brokerUrl + mqttPort;
-        }
-      } else {
-        brokerUrl = brokerUrl + 'localhost:1883';
-      }
-    }
-    return { brokerUrl, wsOptions };
-  }
-
   function setProxy() {
     let prox, noprox;
     if (process.env.http_proxy) {
@@ -193,23 +47,27 @@ module.exports = function (RED) {
     return { prox, noprox };
   }
 
+  function getAloesTokenName(node) {
+    return `aloesToken-${node.name}`;
+  }
+
   async function login(node, { email, password }) {
     try {
       const token = await node.http.post(LOGIN_ROUTE, {
         email,
         password,
       });
-      await setToGlobalContext(node, 'aloesToken', token);
+      await setToGlobalContext(node, getAloesTokenName(node), token);
       return token;
     } catch (error) {
-      await setToGlobalContext(node, 'aloesToken', undefined);
+      await setToGlobalContext(node, getAloesTokenName(node), undefined);
       const message = 'Login error';
       throw new Error(`${message}: ${error.message}`);
     }
   }
 
   async function getToken(node, credentials) {
-    let token = await getFromGlobalContext(node, 'aloesToken');
+    let token = await getFromGlobalContext(node, getAloesTokenName(node));
     if (!token || !token.id) {
       token = await login(node, credentials);
     }
@@ -228,7 +86,7 @@ module.exports = function (RED) {
     this.mqttPort = config.mqttPort;
     this.mqttSecure = config.mqttSecure;
 
-    this.usews = config.usews;
+    // this.usews = config.usews;
     // this.verifyservercert = config.verifyservercert;
     // this.compatmode = config.compatmode;
     this.keepalive = config.keepalive;
@@ -261,9 +119,9 @@ module.exports = function (RED) {
     if (typeof this.mqttSecure === 'undefined') {
       this.mqttSecure = false;
     }
-    if (typeof this.usews === 'undefined') {
-      this.usews = false;
-    }
+    // if (typeof this.usews === 'undefined') {
+    //   this.usews = false;
+    // }
     if (typeof this.compatmode === 'undefined') {
       this.compatmode = false;
     }
@@ -284,12 +142,14 @@ module.exports = function (RED) {
     // Create the URL to pass in to the Axios library
     if (this.serverUrl === '') {
       const { serverUrl } = getServerUrl(
-        this.httpHost,
-        this.httpPort,
-        this.httpApiRoot,
+        {
+          host: this.httpHost,
+          port: this.httpPort,
+          apiRoot: this.httpApiRoot,
+          secure: this.httpSecure,
+        },
         prox,
         noprox,
-        this.httpSecure,
       );
       this.serverUrl = serverUrl;
       // if (httpOptions) {
@@ -300,11 +160,13 @@ module.exports = function (RED) {
     // Create the URL to pass in to the MQTT.js library
     if (this.brokerUrl === '') {
       const { brokerUrl, wsOptions } = getBrokerUrl(
-        this.mqttHost,
-        this.mqttPort,
+        {
+          host: this.mqttHost,
+          port: this.mqttPort,
+          secure: this.mqttSecure,
+        },
         prox,
         noprox,
-        this.mqttSecure,
       );
 
       this.brokerUrl = brokerUrl;
@@ -657,7 +519,7 @@ module.exports = function (RED) {
       }
     };
 
-    this.on('close', function (done) {
+    this.on('close', async function (done) {
       this.closing = true;
       this.ready = false;
       this.errored = false;
@@ -674,6 +536,8 @@ module.exports = function (RED) {
           broker: (node.clientid ? node.clientid + '@' : '') + node.brokerUrl,
         }),
       );
+
+      await setToGlobalContext(node, getAloesTokenName(node), undefined);
 
       if (this.connected) {
         // Send close message
