@@ -105,11 +105,7 @@ function getServerUrl(
   return { serverUrl, httpOptions };
 }
 
-function getBrokerUrl(
-  { host = 'localhost', port = null, secure = false },
-  prox,
-  noprox,
-) {
+function getBrokerUrl({ host = 'localhost', port = null, secure = false }, prox, noprox) {
   let brokerUrl;
   let wsOptions;
   // if the broker may be ws:// or wss:// or even tcp://
@@ -173,6 +169,18 @@ const isValidCollection = (collection) => Object.values(COLLECTIONS).includes(co
 
 const isValidMethod = (method) => Object.values(METHODS).includes(method);
 
+const isValidTopic = (topic) => {
+  const parts = topic.split('/');
+  if (parts.length < 4) {
+    return false;
+  }
+  const [, collection, method] = parts;
+  if (!isValidCollection(collection) || !isValidMethod(method)) {
+    return false;
+  }
+  return true;
+};
+
 const getAloesTopic = ({ userId, method, collection, instanceId = null }) => {
   if (isValidCollection(collection) && isValidMethod(method)) {
     return instanceId
@@ -220,6 +228,7 @@ module.exports = {
   getInstanceName,
   isValidCollection,
   isValidMethod,
+  isValidTopic,
   matchTopic,
   saveInstance,
   sendTo,

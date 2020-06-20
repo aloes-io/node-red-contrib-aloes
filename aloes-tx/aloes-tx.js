@@ -25,6 +25,21 @@ module.exports = function (RED) {
     //   node.error()
     // });
 
+    function inputsValid(topic) {
+      const [userId, collection, method] = topic.split('/');
+      if (!node.aloesConn.userId || !userId || node.aloesConn.userId !== userId) {
+        node.warn(RED._('aloes.errors.invalid-user-id'));
+        return false;
+      } else if (!isValidCollection(collection)) {
+        node.warn(RED._('aloes.errors.invalid-collection'));
+        return false;
+      } else if (!isValidMethod(method)) {
+        node.warn(RED._('aloes.errors.invalid-method'));
+        return false;
+      }
+      return true;
+    }
+
     node.aloesConn.on('ready', () => {
       if (this.aloesConn.connected) {
         node.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected' });
@@ -47,25 +62,15 @@ module.exports = function (RED) {
       }
       if (msg.hasOwnProperty('payload')) {
         if (msg.hasOwnProperty('topic') && typeof msg.topic === 'string' && msg.topic !== '') {
-          // topic must exist
           if (chk.test(msg.topic)) {
             node.warn(RED._('aloes.errors.invalid-topic'));
           }
-          const [userId, collection, method] = msg.topic.split('/');
 
-          if (!this.aloesConn.userId || !userId || this.aloesConn.userId !== userId) {
-            node.warn(RED._('aloes.errors.invalid-user-id'));
-            done();
-          } else if (!isValidCollection(collection)) {
-            node.warn(RED._('aloes.errors.invalid-collection'));
-            done();
-          } else if (isValidMethod(method)) {
-            node.warn(RED._('aloes.errors.invalid-method'));
-            done();
-          } else {
+          if (inputsValid(msg.topic)) {
             this.log(`publish to ${msg.topic}`);
             this.aloesConn.publish(msg, done);
           }
+          done();
         } else {
           node.warn(RED._('aloes.errors.invalid-topic'));
           done();
