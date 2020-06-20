@@ -1,6 +1,6 @@
 <script type="text/javascript">
   RED.nodes.registerType('set-instance', {
-    category: 'function',
+    category: 'storage',
     color: '#77d1bf',
     defaults: {
       deviceName: { value: '', required: true },
@@ -13,7 +13,7 @@
     inputs: 1,
     outputs: 3,
     inputLabels: 'Instance',
-    outputLabels: ['Device', 'Sensors', 'Measurements'],
+    outputLabels: ['Device', 'Sensor', 'Measurement'],
     icon: 'aloes-icon-min.svg',
     label: function () {
       return this.deviceName || 'set-instance';
@@ -33,7 +33,7 @@
   </div>
 
   <div class="form-row">
-    <label for="node-input-saveInstances"><i class="icon-tag"></i><span data-i18n="aloes.label.save-instances"></span></label>
-    <input type="checkbox" id="node-input-saveInstances">
+    <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-saveInstances"><i class="icon-tag"></i><span data-i18n="aloes.label.save-instances"></span></label>
+    <input style="width: 300px;" type="checkbox" id="node-input-saveInstances">
   </div>
 </script>

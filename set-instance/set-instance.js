@@ -14,6 +14,20 @@ module.exports = function (RED) {
     const node = this;
     const { deviceId, deviceName, saveInstances } = config;
 
+    function inputsValid(msg) {
+      if (!msg.collection) {
+        node.error(RED._('aloes.errors.missing-collection'));
+        return false;
+      } else if (!isValidCollection(msg.collection)) {
+        node.error(RED._('aloes.errors.invalid-collection'));
+        return false;
+      } else if (!isValidMethod(msg.method)) {
+        node.error(RED._('aloes.errors.invalid-method'));
+        return false;
+      }
+      return true;
+    }
+
     const extractDeviceId = (msg) => {
       switch (msg.collection) {
         case COLLECTIONS.DEVICE:
@@ -48,16 +62,7 @@ module.exports = function (RED) {
             node.send.apply(node, arguments);
           };
 
-        if (!msg.collection) {
-          node.error(RED._('aloes.errors.missing-collection'));
-          done();
-          return;
-        } else if (!isValidCollection(msg.collection)) {
-          node.error(RED._('aloes.errors.invalid-collection'));
-          done();
-          return;
-        } else if (!isValidMethod(msg.method)) {
-          node.error(RED._('aloes.errors.invalid-method'));
+        if (!inputsValid(msg)) {
           done();
           return;
         }
@@ -67,7 +72,6 @@ module.exports = function (RED) {
         if (incomingDeviceId && deviceId === incomingDeviceId) {
           const type = msg.collection.toLowerCase();
           const storageKey = setStorageKey(msg, type);
-
           if (saveInstances) {
             await saveInstance[type](node, storageKey, msg.payload);
           }
