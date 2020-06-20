@@ -12,7 +12,7 @@ module.exports = function (RED) {
     this.connectionType = CONNECTION_TYPES.mqtt;
 
     if (isNaN(this.qos) || this.qos < 0 || this.qos > 2) {
-      this.qos = 2;
+      this.qos = 0;
     }
 
     this.datatype = config.datatype || 'utf8';
@@ -27,23 +27,23 @@ module.exports = function (RED) {
 
     const node = this;
 
-    function messageCallback(topic, payload, packet) {
-      const parts = topic.split('/');
-
-      const [userId, collection, method] = parts;
+    function inputsValid(parts) {
+      const [, collection, method] = parts;
       if (!collection) {
         node.error(RED._('aloes.errors.missing-collection'));
-        return;
+        return false;
       } else if (!isValidCollection(collection)) {
         node.error(RED._('aloes.errors.invalid-collection'));
-        return;
+        return false;
       } else if (!isValidMethod(method)) {
         node.error(RED._('aloes.errors.invalid-method'));
-        return;
+        return false;
       }
+      return true;
+    }
 
-      const type = collection.toLowerCase();
-
+    function parsePayload(packet) {
+      let { topic, payload, qos, retain } = packet;
       if (node.datatype === 'buffer') {
         // payload = payload;
         try {
@@ -52,10 +52,10 @@ module.exports = function (RED) {
           node.error(RED._('aloes.errors.invalid-json-parse'), {
             payload,
             topic,
-            qos: packet.qos,
-            retain: packet.retain,
+            qos,
+            retain,
           });
-          return;
+          return null;
         }
       } else if (node.datatype === 'base64') {
         payload = payload.toString('base64');
@@ -70,26 +70,40 @@ module.exports = function (RED) {
             node.error(RED._('aloes.errors.invalid-json-parse'), {
               payload,
               topic,
-              qos: packet.qos,
-              retain: packet.retain,
+              qos,
+              retain,
             });
-            return;
+            return null;
           }
         } else {
           node.error(RED._('aloes.errors.invalid-json-string'), {
             payload,
             topic,
-            qos: packet.qos,
-            retain: packet.retain,
+            qos,
+            retain,
           });
-          return;
+          return null;
         }
       } else {
         if (isUtf8(payload)) {
           payload = payload.toString();
         }
       }
+      return payload;
+    }
 
+    function messageCallback(topic, payload, packet) {
+      const parts = topic.split('/');
+      if (!inputsValid(parts)) {
+        return;
+      }
+
+      payload = parsePayload({ ...packet, topic, payload });
+      if (!payload) {
+        return;
+      }
+      const [userId, collection, method] = parts;
+      const type = collection.toLowerCase();
       const instanceName = getInstanceName[type](payload);
 
       const msg = {
@@ -97,14 +111,11 @@ module.exports = function (RED) {
         collection,
         method,
         instanceName,
+        ...packet,
         topic,
         payload,
-        qos: packet.qos,
-        retain: packet.retain,
       };
-      // if (node.aloesConn.mqttHost === 'localhost' || node.aloesConn.mqttHost === '127.0.0.1') {
-      //   msg._topic = topic;
-      // }
+
       node.send(msg);
     }
 
