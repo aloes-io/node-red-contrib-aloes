@@ -1,0 +1,60 @@
+<script type="text/html" data-help-name="set-instance">
+  <p>A node to catch / persist data from a specific device tree</p>
+  <br>
+  <p>You can pass all incoming data from Aloes from HTTP response and/or MQTT events.</p>
+  <p>If a device | sensor | measurement match the declared deviceId, the instance will be sent via corresponding node's output.</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>deviceId <span class="property-type">string</span></dt>
+    <dd>Device id is used to filter incoming messages</dd>
+
+    <dt>deviceName <span class="property-type">string</span></dt>
+    <dd>Device name is used to define key for storage</dd>
+
+    <dt>payload <span class="property-type">object</span></dt>
+    <dd>Device | Sensor | Measurement instance</dd>
+
+    <dt>collection <span class="property-type">string</span></dt>
+    <dd>Type of the instance ( provided in the message input ) </dd>
+
+    <dt class="optional">saveInstances <span class="property-type">boolean</span></dt>
+    <dd> If true save passing instances in the global context </dd>
+
+  </dl>
+
+  <h3>Outputs</h3>
+  <ol class="node-ports">
+    <li>Device
+      <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Device instance</dd>
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Reusable topic pointing to the device instance</dd>
+      </dl>
+    </li>
+    <li>Sensors
+      <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Sensor instance</dd>
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Reusable topic pointing to the sensor instance</dd>
+      </dl>
+    </li>
+    <li>Measurements
+      <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Measurement instance</dd>
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Reusable topic pointing to the measurement instance</dd>
+      </dl>
+    </li>
+  </ol>
+
+  <h3>Details</h3>
+
+  <h3>References</h3>
+    <ul>
+        <li><a>GitHub</a> - the nodes github repository</li>
+    </ul>
+</script>

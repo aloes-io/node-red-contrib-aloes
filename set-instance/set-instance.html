@@ -1,0 +1,39 @@
+<script type="text/javascript">
+  RED.nodes.registerType('set-instance', {
+    category: 'function',
+    color: '#77d1bf',
+    defaults: {
+      deviceName: { value: '', required: true },
+      deviceId: { value: '', required: true },
+      saveInstances: {
+        value: false,
+        required: true,
+      },
+    },
+    inputs: 1,
+    outputs: 3,
+    inputLabels: 'Instance',
+    outputLabels: ['Device', 'Sensors', 'Measurements'],
+    icon: 'aloes-icon-min.svg',
+    label: function () {
+      return this.deviceName || 'set-instance';
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="set-instance">
+  <div class="form-row">
+    <label for="node-input-deviceName"><i class="icon-tag"></i><span data-i18n="aloes.label.device-name"></span></label>
+    <input type="text" id="node-input-deviceName">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-deviceId"><i class="icon-tag"></i><span data-i18n="aloes.label.device-id"></span></label>
+    <input type="text" id="node-input-deviceId">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-saveInstances"><i class="icon-tag"></i><span data-i18n="aloes.label.save-instances"></span></label>
+    <input type="checkbox" id="node-input-saveInstances">
+  </div>
+</script>

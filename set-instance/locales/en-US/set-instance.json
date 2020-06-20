@@ -1,0 +1,17 @@
+{
+  "aloes": {
+    "label": {
+      "name": "Name",
+      "device-id": "Device Id",
+      "device-name": "Device Name",
+      "save-instances": "Save instances",
+      "collection": "Aloes Collection"
+    },
+    "errors": {
+      "missing-collection": "Missing collection",
+      "invalid-collection": "Invalid collection",
+      "invalid-method": "Invalid method",
+      "invalid-not-defined": "Input not defined"
+    }
+  }
+}
