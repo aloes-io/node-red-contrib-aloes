@@ -1,0 +1,66 @@
+<script type="text/html" data-help-name="get-instance">
+  <p>A node to retrieve an instance from global context</p>
+  <br>
+  <p>deviceName can be defined by an env variable (${your_variable}).</p>
+  <p>You can pass all inputs via UI, using string or env. variable (${your_variable}), or directly via the message (except deviceName).</p>
+  <p>One of topic or collection must be provided.</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>deviceName <span class="property-type">string</span></dt>
+    <dd>Device name is used to define key for storage</dd>
+
+    <dt>useTopic <span class="property-type">boolean</span></dt>
+    <dd>Use the topic to generate storeKey</dd>
+
+    <dt class="optional">topic <span class="property-type">string</span></dt>
+    <dd>Topic to generate storeKey</dd>
+
+    <dt class="optional">collection <span class="property-type">string</span></dt>
+    <dd>Type of the instance</dd>
+
+    <dt class="optional">sensorType <span class="property-type">string</span></dt>
+    <dd>OMA Object Id of the sensor</dd>
+
+    <dt class="optional">nativeNodeId <span class="property-type">string</span></dt>
+    <dd>Native Node Id of the sensor</dd>
+
+    <dt class="optional">nativeSensorId <span class="property-type">string</span></dt>
+    <dd>Native Sensor Id</dd>
+  </dl>
+
+  <h3>Outputs</h3>
+  <ol class="node-ports">
+    <li>Device
+      <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Device instance</dd>
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Reusable topic pointing to the device instance</dd>
+      </dl>
+    </li>
+    <li>Sensor
+      <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Sensor instance</dd>
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Reusable topic pointing to the sensor instance</dd>
+      </dl>
+    </li>
+    <li>Measurement
+      <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Measurement instance</dd>
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Reusable topic pointing to the measurement instance</dd>
+      </dl>
+    </li>
+  </ol>
+
+  <h3>Details</h3>
+
+  <h3>References</h3>
+    <ul>
+        <li><a>GitHub</a> - the nodes github repository</li>
+    </ul>
+</script>

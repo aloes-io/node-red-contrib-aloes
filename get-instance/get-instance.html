@@ -1,0 +1,81 @@
+<script type="text/javascript">
+  RED.nodes.registerType('get-instance', {
+    category: 'storage',
+    color: '#77d1bf',
+    defaults: {
+      deviceName: { value: '', required: true },
+      topic: { value: '', required: false },
+      collection: { value: '', required: false },
+      sensorType: { value: '', required: false },
+      nativeNodeId: { value: '', required: false },
+      nativeSensorId: { value: '', required: false },
+      useTopic: { value: true, required: true },
+    },
+    inputs: 1,
+    outputs: 3,
+    inputLabels: 'Parameters',
+    outputLabels: ['Device', 'Sensor', 'Measurement'],
+    icon: 'aloes-icon-min.svg',
+    label: function () {
+      return this.deviceName || 'get-instance';
+    },
+    oneditprepare: function () {
+      function updateSensorDetailsOptions() {
+        if ($('#node-input-collection').val() === 'Sensor') {
+          $('#node-row-sensorDetails').show();
+        } else {
+          $('#node-row-sensorDetails').hide();
+        }
+      }
+
+      updateSensorDetailsOptions();
+
+      $('#node-input-collection').on('change', function () {
+        updateSensorDetailsOptions();
+      });
+    },
+
+    oneditsave: function () {
+      if ($('#node-input-collection').val() !== 'Sensor') {
+        $('#node-input-sensorType').val('');
+        $('#node-input-nativeNodeId').val('');
+        $('#node-input-nativeSensorId').val('');
+      }
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="get-instance">
+  <div class="form-row">
+    <label for="node-input-deviceName"><i class="icon-tag"></i><span data-i18n="aloes.label.device-name"></span></label>
+    <input type="text" id="node-input-deviceName">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-topic"><i class="icon-tag"></i><span data-i18n="aloes.label.topic"></span></label>
+    <input type="text" id="node-input-topic">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-collection"><i class="icon-tag"></i> <span data-i18n="aloes.label.collection"></label>
+      <select id="node-input-collection" placeholder="#"style="width:70%;">
+        <option value=""></option>
+        <option value="Device" data-i18n="aloes.collection.device"></option>
+        <option value="Sensor" data-i18n="aloes.collection.sensor"></option>
+        <option value="Measurement" data-i18n="aloes.collection.measurement"></option>
+      </select>
+    <div id="node-row-sensorDetails" class="hide">
+      <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-sensorType"><span data-i18n="aloes.label.sensor-type"></span></label>
+      <input style="width: 300px;" type="text" id="node-input-sensorType">
+      <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-nativeNodeId"><span data-i18n="aloes.label.native-node-id"></span></label>
+      <input style="width: 300px;" type="text" id="node-input-nativeNodeId">
+      <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-nativeSensorId"><span data-i18n="aloes.label.native-sensor-id"></span></label>
+      <input style="width: 300px;" type="text" id="node-input-nativeSensorId">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-useTopic"><i class="icon-tag"></i><span data-i18n="aloes.label.use-topic"></span></label>
+    <input style="width: 300px;" type="checkbox" id="node-input-useTopic">
+  </div>
+</script>

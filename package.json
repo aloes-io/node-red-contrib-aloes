@@ -13,6 +13,7 @@
       "aloes-network": "aloes-network/aloes-network.js",
       "aloes-rx": "aloes-rx/aloes-rx.js",
       "aloes-tx": "aloes-tx/aloes-tx.js",
+      "get-instance": "get-instance/get-instance.js",
       "set-instance": "set-instance/set-instance.js",
       "get-aloes-devices": "get-aloes-devices/get-aloes-devices.js"
     }

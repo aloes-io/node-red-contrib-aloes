@@ -1,0 +1,26 @@
+{
+  "aloes": {
+    "label": {
+      "name": "Name",
+      "use-topic": "Use Topic",
+      "topic": "Topic",
+      "device-name": "Device name",
+      "collection": "Aloes collection",
+      "sensor-type": "Sensor type",
+      "native-node-id": "Native node Id",
+      "native-sensor-id": "Native sensor Id"
+    },
+    "collection": {
+      "device": "Device",
+      "application": "Application",
+      "sensor": "Sensor",
+      "measurement": "Measurement"
+    },
+    "errors": {
+      "missing-input": "Missing input",
+      "invalid-collection": "Invalid collection",
+      "invalid-topic": "Invalid topic",
+      "not-found": "Instance not found"
+    }
+  }
+}
