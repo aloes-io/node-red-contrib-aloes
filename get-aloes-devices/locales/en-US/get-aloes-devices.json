@@ -1,0 +1,21 @@
+{
+  "aloes": {
+    "label": {
+      "example": "localhost",
+      "aloesNetwork": "Aloes network",
+      "includeSensors": "Include Sensors",
+      "includeSensorsResources": "Inclue Sensors resources"
+    },
+    "tip": "Tip: Leave includeSensors or includeSensorsResources blank if you want to set them via msg properties.",
+    "errors": {
+      "not-ready": "Aloes connection not ready",
+      "invalid-topic": "Invalid topic",
+      "invalid-collection": "Invalid collection",
+      "invalid-user-id": "Invalid user id",
+      "invalid-json-parse": "Invalid JSON parsing",
+      "invalid-json-string": "Invalid JSON string",
+      "invalid-not-defined": "Input not defined",
+      "invalid-missing": "Missing Aloes config"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+<script type="text/javascript">
+  RED.nodes.registerType('get-aloes-devices', {
+    category: 'network',
+    // color: "#29abe2",
+    color: '#77d1bf',
+    defaults: {
+      name: { value: '' },
+      aloesNetwork: { type: 'aloes-network', required: true },
+      includeSensors: {
+        value: false,
+        required: false,
+      },
+      includeSensorsResources: {
+        value: false,
+        required: false,
+      },
+    },
+    inputs: 1,
+    outputs: 1,
+    inputLabels: 'parameter for request',
+    outputLabels: 'instance',
+    icon: 'aloes-icon-min.svg',
+    label: function () {
+      return this.name || 'get-aloes-devices';
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="get-aloes-devices">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="common.label.name"></span></label>
+    <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-aloesNetwork"><i class="fa fa-globe"></i> <span data-i18n="aloes.label.aloesNetwork"></span></label>
+    <input type="text" id="node-input-aloesNetwork">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-includeSensors"><i class="fa fa-tasks"></i> <span data-i18n="aloes.label.includeSensors"></span></label>
+    <input type="text" id="node-input-includeSensors" data-i18n="[placeholder]common.label.includeSensors">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-includeSensorsResources"><i class="fa fa-tasks"></i> <span data-i18n="aloes.label.includeSensorsResources"></span></label>
+    <input type="text" id="node-input-includeSensorsResources" data-i18n="[placeholder]common.label.includeSensorsResources">
+  </div>
+
+  <div class="form-tips"><span data-i18n="aloes.tip"></span></div>
+</script>

@@ -1,0 +1,37 @@
+{
+  "aloes": {
+    "label": {
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "example": "localhost",
+      "httpHost": "HTTP Host",
+      "httpPort": "HTTP Port",
+      "httpSecure": "HTTP TLS",
+      "mqttHost": "MQTT Host",
+      "mqttPort": "MQTT Port",
+      "mqttSecure": "MQTT TLS",
+      "keepAlive": "Keepalive",
+      "cleanSession": "Clean session",
+      "compatMode": "Compatibility Mode",
+      "tlsConfig": "TLS Configuration"
+    },
+    "tabs-label": {
+      "http": "HTTP Config",
+      "mqtt": "MQTT Config",
+      "security": "Aloes credentials"
+    },
+    "state": {
+      "stop-http": "Stop connection to server: __server__",
+      "stop-mqtt": "Stop connection to broker: __broker__",
+      "login-success": "Logged in to server: __server__",
+      "login-error": "Could not login to server: __server__",
+      "send-request": "Send request to server: __server__",
+      "response-success": "Response received from server: __server__",
+      "response-error": "Error received from server: __server__",
+      "connected": "Connected to broker: __broker__",
+      "disconnected": "Disconnected from broker: __broker__",
+      "connect-failed": "Connection failed to broker: __broker__"
+    }
+  }
+}

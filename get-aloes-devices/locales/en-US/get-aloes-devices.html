@@ -1,0 +1,45 @@
+<script type="text/html" data-help-name="get-aloes-devices">
+  <p>A node to access all your devices on Aloes Server</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>payload <span class="property-type">any</span></dt>
+    <dd> Trigger the request on Aloes. </dd>
+
+    <dt>aloesNetwork <span class="property-type">object</span></dt>
+    <dd> Declare your Aloes instance configuration </dd>
+
+    <dt class="optional">includeSensors <span class="property-type">boolean</span></dt>
+    <dd> Add sensors children to the devices</dd>
+
+    <dt class="optional">includeSensorsResources <span class="property-type">boolean</span></dt>
+    <dd> Add sensors resources children to the sensors</dd>
+
+  </dl>
+
+  <h3>Outputs</h3>
+  <ol class="node-ports">
+    <li>Instance
+      <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Device | Sensor | Measurement instance</dd>
+        
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Reusable topic pointing to the instance</dd>
+
+        <dt>instanceName <span class="property-type">string</span></dt>
+        <dd>Key under which the instance is identified in the globalContext</dd>
+
+        <dt>collection <span class="property-type">string</span></dt>
+        <dd>Type to the instance</dd>
+      </dl>
+    </li>
+  </ol>
+
+  <h3>Details</h3>
+
+  <h3>References</h3>
+  <ul>
+      <li><a>GitHub</a> - the nodes github repository</li>
+  </ul>
+</script>

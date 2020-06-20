@@ -1,0 +1,269 @@
+<script type="text/javascript">
+  RED.nodes.registerType('aloes-network', {
+    category: 'config',
+    defaults: {
+      name: { value: 'aloes-local', required: true },
+
+      httpHost: { value: 'localhost', required: true },
+      httpPort: {
+        value: 8000,
+        required: true,
+        validate: RED.validators.number(true),
+      },
+      httpApiRoot: {
+        value: '/api',
+        required: true,
+        validate: function (v) {
+          return typeof v === 'string' && v.startsWith('/') && !v.endsWith('/');
+        },
+      },
+      httpSecure: {
+        value: false,
+        required: true,
+      },
+      httpTls: { type: 'tls-config', required: false },
+
+      mqttHost: { value: 'localhost', required: true },
+      mqttPort: {
+        value: 1883,
+        required: true,
+        validate: RED.validators.number(true),
+      },
+      mqttSecure: {
+        value: false,
+        required: true,
+      },
+      mqttTls: { type: 'tls-config', required: false },
+
+      verifyservercert: { value: false },
+      compatmode: { value: false },
+      keepalive: { value: 60, validate: RED.validators.number() },
+      cleansession: { value: true },
+    },
+    credentials: {
+      email: { type: 'text', required: true },
+      password: { type: 'password', required: true },
+      token: { type: 'password' },
+    },
+
+    label: function () {
+      return this.name;
+    },
+    oneditprepare: function () {
+      const connectionTypes = {
+        http: 'http',
+        mqtt: 'mqtt',
+      };
+
+      const tabs = RED.tabs.create({
+        id: 'node-config-aloes-network-tabs',
+        onchange: function (tab) {
+          $('#node-config-aloes-network-tabs-content').children().hide();
+          $('#' + tab.id).show();
+        },
+      });
+      tabs.addTab({
+        id: 'aloes-network-tab-http',
+        label: this._('aloes.tabs-label.http'),
+      });
+      tabs.addTab({
+        id: 'aloes-network-tab-mqtt',
+        label: this._('aloes.tabs-label.mqtt'),
+      });
+      tabs.addTab({
+        id: 'aloes-network-tab-security',
+        label: this._('aloes.tabs-label.security'),
+      });
+
+      setTimeout(function () {
+        tabs.resize();
+      }, 0);
+
+      if (typeof this.cleansession === 'undefined') {
+        this.cleansession = true;
+        $('#node-config-input-cleansession').prop('checked', true);
+      }
+      if (typeof this.httpSecure === 'undefined') {
+        this.httpSecure = false;
+        $('#node-config-input-httpSecure').prop('checked', false);
+      }
+      if (typeof this.mqttSecure === 'undefined') {
+        this.mqttSecure = false;
+        $('#node-config-input-mqttSecure').prop('checked', false);
+      }
+      if (typeof this.compatmode === 'undefined') {
+        this.compatmode = false;
+        $('#node-config-input-compatmode').prop('checked', false);
+      }
+      if (typeof this.keepalive === 'undefined') {
+        this.keepalive = 15;
+        $('#node-config-input-keepalive').val(this.keepalive);
+      }
+
+      function updateTLSOptions() {
+        if ($('#node-config-input-httpSecure').is(':checked')) {
+          $('#node-config-row-httpTls').show();
+        } else {
+          $('#node-config-row-httpTls').hide();
+        }
+
+        if ($('#node-config-input-mqttSecure').is(':checked')) {
+          $('#node-config-row-mqttTls').show();
+        } else {
+          $('#node-config-row-mqttTls').hide();
+        }
+      }
+
+      updateTLSOptions();
+
+      $('#node-config-input-httpSecure').on('click', function () {
+        updateTLSOptions();
+      });
+      $('#node-config-input-mqttSecure').on('click', function () {
+        updateTLSOptions();
+      });
+
+      const node = this;
+
+      // function updateClientId() {
+      //   if ($('#node-config-input-cleansession').is(':checked')) {
+      //     $('#node-config-input-clientid').attr(
+      //       'placeholder',
+      //       node._('aloes.placeholder.clientid'),
+      //     );
+      //   } else {
+      //     $('#node-config-input-clientid').attr(
+      //       'placeholder',
+      //       node._('aloes.placeholder.clientid-nonclean'),
+      //     );
+      //   }
+      //   $('#node-config-input-clientid').change();
+      // }
+
+      // setTimeout(updateClientId, 0);
+      // $('#node-config-input-cleansession').on('click', function () {
+      //   updateClientId();
+      // });
+
+      function updatePortEntry(connectionType) {
+        const nodeHostId =
+          connectionType === connectionTypes.http
+            ? '#node-config-input-httpHost'
+            : '#node-config-input-mqttHost';
+        const nodePortId =
+          connectionType === connectionTypes.http
+            ? '#node-config-input-httpPort'
+            : '#node-config-input-mqttPort';
+
+        const disabled = $(nodePortId).prop('disabled');
+        if ($(nodeHostId).val().indexOf('://') === -1) {
+          if (disabled) {
+            $(nodePortId).prop('disabled', false);
+          }
+        } else {
+          if (!disabled) {
+            $(nodePortId).prop('disabled', true);
+          }
+        }
+      }
+
+      $('#node-config-input-httpHost').on('change', function () {
+        updatePortEntry(connectionTypes.http);
+      });
+      $('#node-config-input-httpHost').on('keyup', function () {
+        updatePortEntry(connectionTypes.http);
+      });
+      $('#node-config-input-mqttHost').on('change', function () {
+        updatePortEntry(connectionTypes.mqtt);
+      });
+      $('#node-config-input-mqttHost').on('keyup', function () {
+        updatePortEntry(connectionTypes.mqtt);
+      });
+
+      setTimeout(() => {
+        updatePortEntry(connectionTypes.http);
+        updatePortEntry(connectionTypes.mqtt);
+      }, 50);
+    },
+
+    oneditsave: function () {
+      if (!$('#node-config-input-httpSecure').is(':checked')) {
+        $('#node-config-input-httpTls').val('');
+      }
+      if (!$('#node-config-input-mqttSecure').is(':checked')) {
+        $('#node-config-input-mqttTls').val('');
+      }
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="aloes-network">
+    <div class="form-row">
+      <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="aloes.label.name"></span></label>
+      <input type="text" id="node-config-input-name" data-i18n="[placeholder]aloes.label.name">
+    </div>
+
+    <div class="form-row">
+      <ul style="min-width: 600px; margin-bottom: 20px;" id="node-config-aloes-network-tabs"></ul>
+  </div>
+  <div id="node-config-aloes-network-tabs-content" style="min-height:150px;">
+
+    <div id="aloes-network-tab-http" style="display:none">
+      <div class="form-row node-input-httpHost">
+          <label for="node-config-input-httpHost"><i class="fa fa-globe"></i> <span data-i18n="aloes.label.httpHost"></span></label>
+          <input type="text" id="node-config-input-httpHost" style="width:40%;" data-i18n="[placeholder]aloes.label.example">
+          <label for="node-config-input-httpPort" style="margin-left:20px; width:43px; "> <span data-i18n="aloes.label.httpPort"></span></label>
+          <input type="text" id="node-config-input-httpPort" data-i18n="[placeholder]aloes.label.httpPort" style="width:55px">
+      </div>
+      <div class="form-row">
+          <input type="checkbox" id="node-config-input-httpSecure" style="display: inline-block; width: auto; vertical-align: top;">
+          <label for="node-config-input-httpSecure" style="width: auto" data-i18n="aloes.label.httpSecure"></label>
+          <div id="node-config-row-httpTls" class="hide">
+              <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-config-input-httpTls"><span data-i18n="aloes.label.tlsConfig"></span></label><input style="width: 300px;" type="text" id="node-config-input-tls">
+          </div>
+      </div>
+      <div class="form-row">
+        <label for="node-config-input-httpApiRoot"><i class="icon-bookmark"></i> Api Root</label>
+        <input type="text" id="node-config-input-httpApiRoot">
+      </div>
+    </div>
+
+    <div id="aloes-network-tab-mqtt" style="display:none">
+      <div class="form-row node-input-mqttHost">
+          <label for="node-config-input-mqttHost"><i class="fa fa-globe"></i> <span data-i18n="aloes.label.mqttHost"></span></label>
+          <input type="text" id="node-config-input-mqttHost" style="width:40%;" data-i18n="[placeholder]aloes.label.example">
+          <label for="node-config-input-mqttPort" style="margin-left:20px; width:43px; "> <span data-i18n="aloes.label.mqttPort"></span></label>
+          <input type="text" id="node-config-input-mqttPort" data-i18n="[placeholder]aloes.label.mqttPort" style="width:55px">
+      </div>
+      <div class="form-row">
+          <input type="checkbox" id="node-config-input-mqttSecure" style="display: inline-block; width: auto; vertical-align: top;">
+          <label for="node-config-input-mqttSecure" style="width: auto" data-i18n="aloes.label.mqttSecure"></label>
+          <div id="node-config-row-mqttTls" class="hide">
+              <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-config-input-mqttTls"><span data-i18n="aloes.label.tlsConfig"></span></label><input style="width: 300px;" type="text" id="node-config-input-tls">
+          </div>
+      </div>
+      <div class="form-row">
+          <label for="node-config-input-keepalive" style="width: auto"><i class="fa fa-clock-o"></i> <span data-i18n="aloes.label.keepAlive"></span></label>
+          <input type="text" id="node-config-input-keepalive" style="width: 50px">
+          <input type="checkbox" id="node-config-input-cleansession" style="margin-left: 30px; height: 1em;display: inline-block; width: auto; vertical-align: middle;">
+          <label for="node-config-input-cleansession" style="width: auto;" data-i18n="aloes.label.cleanSession"></label>
+      </div>
+      <div class="form-row">
+          <input type="checkbox" id="node-config-input-compatmode" style="display: inline-block; width: auto; vertical-align: top;">
+          <label for="node-config-input-compatmode" style="width: auto;" data-i18n="aloes.label.compatMode"></label>
+      </div>
+    </div>
+
+    <div id="aloes-network-tab-security" style="display:none">
+      <div class="form-row">
+          <label for="node-config-input-email"><i class="fa fa-user"></i> <span data-i18n="aloes.label.email"></span></label>
+          <input type="text" id="node-config-input-email">
+      </div>
+      <div class="form-row">
+          <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="aloes.label.password"></span></label>
+          <input type="password" id="node-config-input-password">
+      </div>
+    </div>
+
+  </div>
+</script>

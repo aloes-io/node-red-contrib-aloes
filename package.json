@@ -10,21 +10,31 @@
   "license": "ISC",
   "node-red": {
     "nodes": {
-      "aloes-config": "aloes-config/aloes-config.js",
-      "get-devices": "get-devices/get-devices.js"
+      "aloes-network": "aloes-network/aloes-network.js",
+      "aloes-rx": "aloes-rx/aloes-rx.js",
+      "aloes-tx": "aloes-tx/aloes-tx.js",
+      "set-device": "set-device/set-device.js",
+      "get-aloes-devices": "get-aloes-devices/get-aloes-devices.js"
     }
   },
   "dependencies": {
-    "axios": "^0.19.2"
+    "aloes-handlers": "^1.3.1",
+    "axios": "^0.19.2",
+    "is-utf8": "^0.2.1",
+    "mqtt": "^4.1.0"
   },
   "devDependencies": {
+    "aedes": "^0.42.2",
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.3",
+    "express": "^4.17.1",
     "mocha": "^7.1.2",
+    "node-red": "^1.0.6",
     "node-red-node-test-helper": "^0.2.5",
     "nyc": "^15.0.1",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "should": "^13.2.3"
   },
   "eslintConfig": {
     "root": true,
@@ -68,7 +78,6 @@
   "mocha": {
     "recursive": true,
     "check-leaks": true,
-    "delay": true,
     "bail": false,
     "slow": 500,
     "reporter": "spec"

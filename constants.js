@@ -8,6 +8,7 @@ const PATHS = {
 const COLLECTIONS = {
   DEVICE: 'Device',
   SENSOR: 'Sensor',
+  MEASUREMENT: 'Measurement',
 };
 
 const METHODS = {
@@ -21,9 +22,15 @@ const METHODS = {
 
 const LOGIN_ROUTE = `${PATHS.USER}/login`;
 
+const CONNECTION_TYPES = {
+  http: 'http',
+  mqtt: 'mqtt',
+};
+
 module.exports = {
-  PATHS,
   COLLECTIONS,
+  CONNECTION_TYPES,
   METHODS,
   LOGIN_ROUTE,
+  PATHS,
 };
