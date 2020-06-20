@@ -1,6 +1,12 @@
 module.exports = function (RED) {
   const { COLLECTIONS } = require('../constants');
-  const { getInstanceName, isValidCollection, saveInstance, sendTo } = require('../helpers');
+  const {
+    getInstanceName,
+    isValidCollection,
+    isValidMethod,
+    saveInstance,
+    sendTo,
+  } = require('../helpers');
 
   function SetInstance(config) {
     RED.nodes.createNode(this, config);
