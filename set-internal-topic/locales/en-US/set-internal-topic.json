@@ -10,7 +10,8 @@
       "collection": "Aloes collection",
       "instance-prop": "Instance Property",
       "native-node-id": "Native node Id",
-      "native-sensor-id": "Native sensor Id"
+      "native-sensor-id": "Native sensor Id",
+      "resource": "OMA resource Id"
     },
     "collection": {
       "device": "Device",

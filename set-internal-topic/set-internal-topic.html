@@ -1,5 +1,5 @@
 <script type="text/javascript">
-  RED.nodes.registerType('set-topic', {
+  RED.nodes.registerType('set-internal-topic', {
     category: 'function',
     color: '#77d1bf',
     defaults: {
@@ -28,6 +28,10 @@
         value: '',
         required: false,
       },
+      resource: {
+        value: '',
+        required: false,
+      },
       useTopic: { value: false, required: true },
     },
     inputs: 1,
@@ -36,7 +40,7 @@
     outputLabels: 'Topic',
     icon: 'aloes-icon-min.svg',
     label: function () {
-      return 'set-topic';
+      return 'set-internal-topic';
     },
     oneditprepare: function () {
       function updateSensorDetailsOptions() {
@@ -74,6 +78,7 @@
         if ($('#node-input-collection').val() === 'Device') {
           $('#node-input-nativeNodeId').val('');
           $('#node-input-nativeSensorId').val('');
+          $('#node-input-resource').val('');
         }
       } else {
         $('#node-input-collection').val('');
@@ -81,12 +86,13 @@
         $('#node-input-instanceProperty').val('');
         $('#node-input-nativeNodeId').val('');
         $('#node-input-nativeSensorId').val('');
+        $('#node-input-resource').val('');
       }
     },
   });
 </script>
 
-<script type="text/html" data-template-name="set-topic">
+<script type="text/html" data-template-name="set-internal-topic">
   <div class="form-row">
     <label for="node-input-aloesNetwork"><i class="fa fa-globe"></i> <span data-i18n="aloes.label.aloesNetwork"></span></label>
     <input type="text" id="node-input-aloesNetwork">
@@ -143,7 +149,11 @@
       <label style="width: auto; margin-right: 1%;" for="node-input-nativeSensorId">
         <span data-i18n="aloes.label.native-sensor-id"></span>
       </label>
-      <input style="width: 25%;" type="text" id="node-input-nativeSensorId">
+      <input style="width: 25%; margin-right: 1%;" type="text" id="node-input-nativeSensorId">
+      <label style="width: auto; margin-right: 1%;" for="node-input-resource">
+        <span data-i18n="aloes.label.resource"></span>
+      </label>
+      <input style="width: 25%;" type="text" id="node-input-resource">
     </div>
   </div>
 </script>

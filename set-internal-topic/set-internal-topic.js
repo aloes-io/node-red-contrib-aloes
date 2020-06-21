@@ -2,7 +2,7 @@ module.exports = function (RED) {
   const { COLLECTIONS } = require('../constants');
   const { isValidCollection, isValidMethod, isValidTopic } = require('../helpers');
 
-  function SetTopic(config) {
+  function SetInternalTopic(config) {
     RED.nodes.createNode(this, config);
 
     this.aloesNetwork = config.aloesNetwork;
@@ -17,6 +17,7 @@ module.exports = function (RED) {
       instanceProperty,
       nativeNodeId,
       nativeSensorId,
+      resource,
     } = config;
 
     function inputsValid(msg) {
@@ -77,6 +78,9 @@ module.exports = function (RED) {
         if (nativeSensorId) {
           msg.nativeSensorId = nativeSensorId;
         }
+        if (resource) {
+          msg.resource = resource;
+        }
 
         if (!inputsValid(msg)) {
           done();
@@ -112,5 +116,5 @@ module.exports = function (RED) {
       }
     });
   }
-  RED.nodes.registerType('set-topic', SetTopic);
+  RED.nodes.registerType('set-internal-topic', SetInternalTopic);
 };
