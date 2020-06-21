@@ -1,0 +1,31 @@
+{
+  "aloes": {
+    "label": {
+      "device-name": "Device name",
+      "use-topic": "Use Topic",
+      "save-instances": "Save Instances",
+      "key": "Key",
+      "payload": "Value",
+      "topic": "Topic",
+      "collection": "Aloes collection",
+      "instance-prop": "Instance property",
+      "native-node-id": "Native node Id",
+      "native-sensor-id": "Native sensor Id"
+    },
+    "collection": {
+      "device": "Device",
+      "application": "Application",
+      "sensor": "Sensor",
+      "measurement": "Measurement"
+    },
+    "errors": {
+      "missing-input": "Missing input",
+      "invalid-key": "Invalid key",
+      "invalid-collection": "Invalid collection",
+      "invalid-topic": "Invalid topic",
+      "invalid-device": "Device update failed",
+      "invalid-sensor": "Sensor update failed",
+      "not-found": "Instance not found"
+    }
+  }
+}
