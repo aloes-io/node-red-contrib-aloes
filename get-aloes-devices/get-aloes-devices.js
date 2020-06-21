@@ -133,19 +133,22 @@ module.exports = function (RED) {
             node.send.apply(node, arguments);
           };
 
-        const returnInstances = (messages) => messages.map(send);
-
         const deviceUrl = setDeviceQueryUrl({
           ...config,
           path: PATHS.DEVICE,
           userId: this.userId,
         });
 
+        node.status({
+          fill: 'yellow',
+          shape: 'dot',
+          text: 'node-red:common.status.connecting',
+        });
+
         const devices = await node.aloesConn.get(node, deviceUrl);
         if (devices && devices.length) {
           const messages = await parseDevices(devices, { userId: this.userId, ...config });
-          returnInstances(messages);
-          node.status({ fill: 'green', shape: 'dot', text: 'success' });
+          messages.map(send);
         }
 
         if (done) {

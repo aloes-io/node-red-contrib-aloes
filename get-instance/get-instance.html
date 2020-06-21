@@ -13,11 +13,80 @@
           return true;
         },
       },
-      topic: { value: '', required: false },
-      collection: { value: '', required: false },
-      instanceProperty: { value: '', required: false },
-      nativeNodeId: { value: '', required: false },
-      nativeSensorId: { value: '', required: false },
+      topic: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if ($('#node-input-useTopic').length && $('#node-input-useTopic').is(':checked') && !v) {
+            return false;
+          }
+          return true;
+        },
+      },
+      collection: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if (
+            $('#node-input-getMany').length &&
+            !$('#node-input-getMany').is(':checked') &&
+            $('#node-input-useTopic').length &&
+            !$('#node-input-useTopic').is(':checked') &&
+            !v
+          ) {
+            return false;
+          }
+          return true;
+        },
+      },
+      instanceProperty: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if (
+            $('#node-input-getMany').length &&
+            !$('#node-input-getMany').is(':checked') &&
+            $('#node-input-collection').length &&
+            $('#node-input-collection').val() !== 'Device' &&
+            !v
+          ) {
+            return false;
+          }
+          return true;
+        },
+      },
+      nativeNodeId: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if (
+            $('#node-input-getMany').length &&
+            !$('#node-input-getMany').is(':checked') &&
+            $('#node-input-collection').length &&
+            $('#node-input-collection').val() !== 'Device' &&
+            !v
+          ) {
+            return false;
+          }
+          return true;
+        },
+      },
+      nativeSensorId: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if (
+            $('#node-input-getMany').length &&
+            !$('#node-input-getMany').is(':checked') &&
+            $('#node-input-collection').length &&
+            $('#node-input-collection').val() !== 'Device' &&
+            !v
+          ) {
+            return false;
+          }
+          return true;
+        },
+      },
       useTopic: { value: false, required: true },
       getMany: { value: false, required: true },
     },
@@ -74,16 +143,18 @@
     },
 
     oneditsave: function () {
-      if ($('#node-input-collection').val() !== 'Sensor') {
-        $('#node-input-instanceProperty').val('');
-        $('#node-input-nativeNodeId').val('');
-        $('#node-input-nativeSensorId').val('');
-      }
       if (!$('#node-input-useTopic').is(':checked')) {
         $('#node-input-topic').val('');
+        if ($('#node-input-collection').val() !== 'Sensor') {
+          $('#node-input-instanceProperty').val('');
+          $('#node-input-nativeNodeId').val('');
+          $('#node-input-nativeSensorId').val('');
+        }
       } else {
         $('#node-input-collection').val('');
         $('#node-input-instanceProperty').val('');
+        $('#node-input-nativeNodeId').val('');
+        $('#node-input-nativeSensorId').val('');
       }
     },
   });
@@ -119,6 +190,7 @@
         <span data-i18n="aloes.label.collection"></span>
       </label>
       <select id="node-input-collection" placeholder="#" style="width:25%; margin-right: 1%;">
+        <option value=""></option>
         <option value="Device" data-i18n="aloes.collection.device"></option>
         <option value="Sensor" data-i18n="aloes.collection.sensor"></option>
         <option value="Measurement" data-i18n="aloes.collection.measurement"></option>

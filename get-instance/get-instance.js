@@ -53,17 +53,17 @@ module.exports = function (RED) {
 
     function setGlobs(msg) {
       let glob = '';
-      if (msg.collection) {
-        glob += msg.collection.toLowerCase();
+      if (msg.collection && deviceName) {
+        glob = `${msg.collection.toLowerCase()}-${deviceName}`;
+        return [glob, `${glob}-*`];
+      } else if (msg.collection && !deviceName) {
+        glob = msg.collection.toLowerCase();
+        return [`${glob}-*`];
+      } else if (!msg.collection && deviceName) {
+        glob = `*-${deviceName}`;
+        return [glob, `${glob}-*`];
       }
-      if (deviceName) {
-        if (!glob) {
-          glob += `*-${deviceName}`;
-        } else {
-          glob += `-${deviceName}`;
-        }
-      }
-      return [glob, `${glob}-*`];
+      return ['*'];
     }
 
     function getCollection(key) {
