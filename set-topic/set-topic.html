@@ -7,74 +7,26 @@
       topic: {
         value: '',
         required: false,
-        validate: function (v) {
-          if ($('#node-input-useTopic').length && $('#node-input-useTopic').is(':checked') && !v) {
-            return false;
-          }
-          return true;
-        },
       },
       collection: {
         value: '',
         required: false,
-        validate: function (v) {
-          if ($('#node-input-useTopic').length && !$('#node-input-useTopic').is(':checked') && !v) {
-            return false;
-          }
-          return true;
-        },
       },
       method: {
         value: '',
         required: false,
-        validate: function (v) {
-          if ($('#node-input-useTopic').length && !$('#node-input-useTopic').is(':checked') && !v) {
-            return false;
-          }
-          return true;
-        },
       },
       instanceProperty: {
         value: '',
         required: false,
-        validate: function (v) {
-          if ($('#node-input-useTopic').length && !$('#node-input-useTopic').is(':checked') && !v) {
-            return false;
-          }
-          return true;
-        },
       },
       nativeNodeId: {
         value: '',
         required: false,
-        validate: function (v) {
-          if (
-            $('#node-input-useTopic').length &&
-            !$('#node-input-useTopic').is(':checked') &&
-            $('#node-input-collection').length &&
-            $('#node-input-collection').val() !== 'Device' &&
-            !v
-          ) {
-            return false;
-          }
-          return true;
-        },
       },
       nativeSensorId: {
         value: '',
         required: false,
-        validate: function (v) {
-          if (
-            $('#node-input-useTopic').length &&
-            !$('#node-input-useTopic').is(':checked') &&
-            $('#node-input-collection').length &&
-            $('#node-input-collection').val() !== 'Device' &&
-            !v
-          ) {
-            return false;
-          }
-          return true;
-        },
       },
       useTopic: { value: false, required: true },
     },
@@ -116,11 +68,10 @@
         updateTopicOption();
       });
     },
-
     oneditsave: function () {
       if (!$('#node-input-useTopic').is(':checked')) {
         $('#node-input-topic').val('');
-        if ($('#node-input-collection').val() !== 'Sensor') {
+        if ($('#node-input-collection').val() === 'Device') {
           $('#node-input-nativeNodeId').val('');
           $('#node-input-nativeSensorId').val('');
         }
@@ -161,6 +112,7 @@
         <span data-i18n="aloes.label.collection"></span>
       </label>
       <select id="node-input-collection" placeholder="#" style="width:25%; margin-right: 1%;">
+        <option value=""></option>
         <option value="Device" data-i18n="aloes.collection.device"></option>
         <option value="Sensor" data-i18n="aloes.collection.sensor"></option>
         <option value="Measurement" data-i18n="aloes.collection.measurement"></option>
@@ -170,6 +122,7 @@
         <span data-i18n="aloes.label.method"></span>
       </label>
       <select id="node-input-method" style="width:25%;">
+        <option value=""></option>
         <option value="GET" data-i18n="aloes.method.get"></option>
         <option value="POST" data-i18n="aloes.method.post"></option>
         <option value="PUT" data-i18n="aloes.method.put"></option>
