@@ -18,6 +18,7 @@
       "set-instance": "set-instance/set-instance.js",
       "set-aloes-topic": "set-aloes-topic/set-aloes-topic.js",
       "set-internal-topic": "set-internal-topic/set-internal-topic.js",
+      "to-boolean": "to-boolean/to-boolean.js",
       "update-instance": "update-instance/update-instance.js"
     }
   },

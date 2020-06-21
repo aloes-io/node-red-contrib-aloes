@@ -1,0 +1,14 @@
+{
+  "aloes": {
+    "label": {
+      "resource": "OMA resource Id"
+    },
+    "errors": {
+      "missing-input": "Missing input",
+      "invalid-collection": "Invalid collection",
+      "invalid-method": "Invalid method",
+      "invalid-topic": "Invalid topic",
+      "not-found": "Instance not found"
+    }
+  }
+}
