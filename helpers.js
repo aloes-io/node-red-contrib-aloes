@@ -1,4 +1,5 @@
 const HttpsProxyAgent = require('https-proxy-agent');
+const minimatch = require('minimatch');
 const url = require('url');
 
 const { COLLECTIONS, METHODS } = require('./constants');
@@ -8,6 +9,23 @@ const getFromGlobalContext = (node, key) => {
   return new Promise((resolve, reject) => {
     const globalContext = node.context().global;
     globalContext.get(key, (error, value) => (error ? reject(error) : resolve(value)));
+  });
+};
+
+const getKeysFromGlobalContext = (node, globs) => {
+  // todo get storage type from env ?
+  return new Promise((resolve, reject) => {
+    const globalContext = node.context().global;
+    globalContext.keys((error, keys) => {
+      if (error) {
+        reject(error);
+      } else if (globs && globs.length) {
+        const filteredKeys = keys.filter((key) => globs.some((glob) => minimatch(key, glob)));
+        resolve(filteredKeys);
+      } else {
+        resolve(keys);
+      }
+    });
   });
 };
 
@@ -199,9 +217,9 @@ const getMeasurementName = (measurement) =>
   `${measurement.type}-${measurement.sensorNodeId || 0}-${measurement.nativeSensorId}`;
 
 const getInstanceName = {
-  [COLLECTIONS.DEVICE.toLowerCase()]: (device) => getDeviceName(device),
-  [COLLECTIONS.SENSOR.toLowerCase()]: (sensor) => getSensorName(sensor),
-  [COLLECTIONS.MEASUREMENT.toLowerCase()]: (measurement) => getMeasurementName(measurement),
+  [COLLECTIONS.DEVICE.toLowerCase()]: (payload) => getDeviceName(payload),
+  [COLLECTIONS.SENSOR.toLowerCase()]: (payload) => getSensorName(payload),
+  [COLLECTIONS.MEASUREMENT.toLowerCase()]: (payload) => getMeasurementName(payload),
 };
 
 const sendTo = {
@@ -211,15 +229,16 @@ const sendTo = {
 };
 
 const saveInstance = {
-  [COLLECTIONS.DEVICE.toLowerCase()]: async (node, storageKey, device) =>
-    setToGlobalContext(node, `device-${storageKey}`, device),
-  [COLLECTIONS.SENSOR.toLowerCase()]: async (node, storageKey, sensor) =>
-    setToGlobalContext(node, `sensor-${storageKey}`, sensor),
-  [COLLECTIONS.MEASUREMENT.toLowerCase()]: async (node, storageKey, measurement) => null,
+  [COLLECTIONS.DEVICE.toLowerCase()]: async (node, storageKey, payload) =>
+    setToGlobalContext(node, `device-${storageKey}`, payload),
+  [COLLECTIONS.SENSOR.toLowerCase()]: async (node, storageKey, payload) =>
+    setToGlobalContext(node, `sensor-${storageKey}`, payload),
+  [COLLECTIONS.MEASUREMENT.toLowerCase()]: async (node, storageKey, payload) => null,
 };
 
 module.exports = {
   getFromGlobalContext,
+  getKeysFromGlobalContext,
   getAloesTopic,
   getBrokerUrl,
   getDeviceName,
