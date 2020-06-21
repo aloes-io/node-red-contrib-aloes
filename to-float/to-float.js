@@ -1,7 +1,7 @@
 module.exports = function (RED) {
   const { isValidTopic } = require('../helpers');
 
-  function ToBoolean(config) {
+  function ToFloat(config) {
     RED.nodes.createNode(this, config);
 
     const node = this;
@@ -47,10 +47,10 @@ module.exports = function (RED) {
         }
 
         let value = msg.payload.resources[resourceId];
-        if (typeof value !== 'boolean') {
-          // todo check when boolean might be an object
+        if (typeof value !== 'number') {
+          // todo check when number might be an object
           if (typeof value === 'object' && value.type && value.data) {
-            value = Buffer.from(value.data).toString('utf-8');
+            value = Buffer.from(value).toString('utf-8');
           } else if (Buffer.isBuffer(value)) {
             value = value.toString('utf-8');
           } else if (value instanceof Array) {
@@ -58,21 +58,33 @@ module.exports = function (RED) {
           }
 
           if (typeof value === 'string') {
-            if (msg.payload === 'true' || msg.payload === '1') {
-              msg.payload = true;
-            } else if (msg.payload === 'false' || msg.payload === '0') {
-              msg.payload = false;
+            if (value === 'true') {
+              msg.payload = 1;
+            } else if (value === 'false') {
+              msg.payload = 0;
             } else {
-              msg.payload = Boolean(value);
+              msg.payload = Number(value);
             }
-          } else if (typeof value === 'number') {
-            msg.payload = Boolean(value);
+          } else if (typeof value === 'boolean') {
+            if (value === true) {
+              msg.payload = 1;
+            } else {
+              msg.payload = 0;
+            }
           } else {
             throw new Error('No value found');
           }
         } else {
           msg.payload = value;
         }
+
+        // const unit = env.get('unit');
+        // if (unit && unit !== null) {
+        //   msg.unit = unit;
+        // }
+        // if (msg.payload.resources['5701']) {
+        //   msg.payload = Number(msg.payload.toPrecision(precision));
+        // }
 
         send(msg);
 
@@ -88,5 +100,5 @@ module.exports = function (RED) {
       }
     });
   }
-  RED.nodes.registerType('to-boolean', ToBoolean);
+  RED.nodes.registerType('to-float', ToFloat);
 };

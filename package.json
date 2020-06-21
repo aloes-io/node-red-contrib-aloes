@@ -19,6 +19,7 @@
       "set-aloes-topic": "set-aloes-topic/set-aloes-topic.js",
       "set-internal-topic": "set-internal-topic/set-internal-topic.js",
       "to-boolean": "to-boolean/to-boolean.js",
+      "to-float": "to-float/to-float.js",
       "update-instance": "update-instance/update-instance.js"
     }
   },
