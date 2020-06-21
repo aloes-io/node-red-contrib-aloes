@@ -133,6 +133,7 @@ module.exports = function (RED) {
             node.send.apply(node, arguments);
           };
 
+          // todo use graphql API for faster responses
         const deviceUrl = setDeviceQueryUrl({
           ...config,
           path: PATHS.DEVICE,

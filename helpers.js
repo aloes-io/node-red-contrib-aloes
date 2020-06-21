@@ -189,11 +189,17 @@ const isValidMethod = (method) => Object.values(METHODS).includes(method);
 
 const isValidTopic = (topic) => {
   const parts = topic.split('/');
-  if (parts.length < 4) {
+  const [, collection, method] = parts;
+  if (!collection || !method) {
     return false;
   }
-  const [, collection, method] = parts;
   if (!isValidCollection(collection) || !isValidMethod(method)) {
+    return false;
+  }
+  if (collection === COLLECTIONS.DEVICE && parts.length < 4) {
+    return false;
+  }
+  if (collection === COLLECTIONS.SENSOR && parts.length < 6) {
     return false;
   }
   return true;

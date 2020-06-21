@@ -20,19 +20,17 @@ module.exports = function (RED) {
     } = config;
 
     function inputsValid(msg) {
-      if (
-        (!useTopic && (!msg.collection || !msg.method || !msg.instanceProperty)) ||
-        (useTopic && !msg.topic)
-      ) {
+      const { collection, method, instanceProperty, topic } = msg;
+      if ((!useTopic && (!collection || !method || !instanceProperty)) || (useTopic && !topic)) {
         node.error(RED._('aloes.errors.missing-input'));
         return false;
-      } else if (msg.collection && !isValidCollection(msg.collection)) {
+      } else if (!useTopic && collection && !isValidCollection(collection)) {
         node.error(RED._('aloes.errors.invalid-collection'));
         return false;
-      } else if (msg.method && !isValidMethod(msg.method)) {
+      } else if (!useTopic && method && !isValidMethod(method)) {
         node.error(RED._('aloes.errors.invalid-method'));
         return false;
-      } else if (msg.topic && !isValidTopic(msg.topic)) {
+      } else if (useTopic && topic && !isValidTopic(topic)) {
         node.error(RED._('aloes.errors.invalid-topic'));
         return false;
       }
@@ -44,7 +42,11 @@ module.exports = function (RED) {
       const { collection, method, instanceProperty } = msg;
       let topic = `${userId}/${collection}/${method}/${instanceProperty}`;
       if (collection !== COLLECTIONS.DEVICE) {
-        topic += `/${msg.nativeNodeId}/${msg.nativeSensorId}`;
+        topic += `/${msg.nativeNodeId}/${msg.nativeSensorId}/${msg.resource}`;
+      }
+      if (!isValidTopic) {
+        node.error(RED._('aloes.errors.invalid-topic'));
+        return null;
       }
       return topic;
     }
@@ -80,18 +82,23 @@ module.exports = function (RED) {
           done();
           return;
         }
+
         if (useTopic && msg.topic) {
           const parts = msg.topic.split('/');
           msg.collection = parts[1];
+          msg.method = parts[2];
           msg.instanceProperty = parts[3];
           if (msg.collection === COLLECTIONS.SENSOR) {
             msg.nativeNodeId = parts[4];
             msg.nativeSensorId = parts[5];
+            msg.resource = parts[6];
           }
         }
 
         msg.topic = setTopic(msg);
-        send(msg);
+        if (msg.topic) {
+          send(msg);
+        }
 
         if (done) {
           done();
