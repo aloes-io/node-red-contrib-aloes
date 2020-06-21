@@ -1,0 +1,36 @@
+{
+  "aloes": {
+    "label": {
+      "name": "Name",
+      "aloesNetwork": "Aloes Conf",
+      "use-topic": "Use Topic",
+      "topic": "Topic",
+      "method": "Method",
+      "device-name": "Device name",
+      "collection": "Aloes collection",
+      "instance-prop": "Instance Property",
+      "native-node-id": "Native node Id",
+      "native-sensor-id": "Native sensor Id"
+    },
+    "collection": {
+      "device": "Device",
+      "application": "Application",
+      "sensor": "Sensor",
+      "measurement": "Measurement"
+    },
+    "method": {
+      "get": "GET",
+      "post": "POST",
+      "put": "PUT",
+      "stream": "STREAM",
+      "delete": "DELETE"
+    },
+    "errors": {
+      "missing-input": "Missing input",
+      "invalid-collection": "Invalid collection",
+      "invalid-method": "Invalid method",
+      "invalid-topic": "Invalid topic",
+      "not-found": "Instance not found"
+    }
+  }
+}

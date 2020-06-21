@@ -1,0 +1,47 @@
+<script type="text/html" data-help-name="set-topic">
+  <p>A node to generate a topic ready to be used by aloes-tx nodes</p>
+  <br>
+  <p>You can pass all inputs via UI, using string or env. variable (${your_variable}), or directly via the message (except deviceName).</p>
+  <p>One of topic or collection must be provided.</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>aloesNetwork <span class="property-type">object</span></dt>
+    <dd> Declare your Aloes instance configuration </dd>
+
+    <dt>useTopic <span class="property-type">boolean</span></dt>
+    <dd>Use the source topic to generate target topic</dd>
+
+    <dt class="optional">topic <span class="property-type">string</span></dt>
+    <dd>Source Topic to generate target topic</dd>
+
+    <dt class="optional">collection <span class="property-type">string</span></dt>
+    <dd>Type of the instance</dd>
+
+    <dt class="optional">instanceProperty <span class="property-type">string</span></dt>
+    <dd>Sensor's OMA Object Id or device's attribute</dd>
+
+    <dt class="optional">nativeNodeId <span class="property-type">string</span></dt>
+    <dd>Native Node Id of the sensor</dd>
+
+    <dt class="optional">nativeSensorId <span class="property-type">string</span></dt>
+    <dd>Native Sensor Id</dd>
+  </dl>
+
+  <h3>Outputs</h3>
+  <ol class="node-ports">
+    <li>Topic
+      <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Target topic</dd>
+      </dl>
+    </li>
+  </ol>
+
+  <h3>Details</h3>
+
+  <h3>References</h3>
+    <ul>
+        <li><a>GitHub</a> - the nodes github repository</li>
+    </ul>
+</script>

@@ -15,7 +15,8 @@
       "aloes-tx": "aloes-tx/aloes-tx.js",
       "get-aloes-devices": "get-aloes-devices/get-aloes-devices.js",
       "get-instance": "get-instance/get-instance.js",
-      "set-instance": "set-instance/set-instance.js"
+      "set-instance": "set-instance/set-instance.js",
+      "set-topic": "set-topic/set-topic.js"
     }
   },
   "dependencies": {

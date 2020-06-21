@@ -1,0 +1,196 @@
+<script type="text/javascript">
+  RED.nodes.registerType('set-topic', {
+    category: 'function',
+    color: '#77d1bf',
+    defaults: {
+      aloesNetwork: { type: 'aloes-network', required: true },
+      topic: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if ($('#node-input-useTopic').length && $('#node-input-useTopic').is(':checked') && !v) {
+            return false;
+          }
+          return true;
+        },
+      },
+      collection: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if ($('#node-input-useTopic').length && !$('#node-input-useTopic').is(':checked') && !v) {
+            return false;
+          }
+          return true;
+        },
+      },
+      method: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if ($('#node-input-useTopic').length && !$('#node-input-useTopic').is(':checked') && !v) {
+            return false;
+          }
+          return true;
+        },
+      },
+      instanceProperty: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if ($('#node-input-useTopic').length && !$('#node-input-useTopic').is(':checked') && !v) {
+            return false;
+          }
+          return true;
+        },
+      },
+      nativeNodeId: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if (
+            $('#node-input-useTopic').length &&
+            !$('#node-input-useTopic').is(':checked') &&
+            $('#node-input-collection').length &&
+            $('#node-input-collection').val() !== 'Device' &&
+            !v
+          ) {
+            return false;
+          }
+          return true;
+        },
+      },
+      nativeSensorId: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if (
+            $('#node-input-useTopic').length &&
+            !$('#node-input-useTopic').is(':checked') &&
+            $('#node-input-collection').length &&
+            $('#node-input-collection').val() !== 'Device' &&
+            !v
+          ) {
+            return false;
+          }
+          return true;
+        },
+      },
+      useTopic: { value: false, required: true },
+    },
+    inputs: 1,
+    outputs: 1,
+    inputLabels: 'Parameters',
+    outputLabels: 'Topic',
+    icon: 'aloes-icon-min.svg',
+    label: function () {
+      return 'set-topic';
+    },
+    oneditprepare: function () {
+      function updateSensorDetailsOptions() {
+        if ($('#node-input-collection').val() === 'Sensor') {
+          $('#node-row-sensorDetails').show();
+        } else {
+          $('#node-row-sensorDetails').hide();
+        }
+      }
+
+      function updateTopicOption() {
+        if ($('#node-input-useTopic').is(':checked')) {
+          $('#node-row-topic').show();
+          $('#node-row-collection').hide();
+        } else {
+          $('#node-row-topic').hide();
+          $('#node-row-collection').show();
+        }
+      }
+
+      updateSensorDetailsOptions();
+      updateTopicOption();
+
+      $('#node-input-collection').on('change', function () {
+        updateSensorDetailsOptions();
+      });
+
+      $('#node-input-useTopic').on('change', function () {
+        updateTopicOption();
+      });
+    },
+
+    oneditsave: function () {
+      if (!$('#node-input-useTopic').is(':checked')) {
+        $('#node-input-topic').val('');
+        if ($('#node-input-collection').val() !== 'Sensor') {
+          $('#node-input-nativeNodeId').val('');
+          $('#node-input-nativeSensorId').val('');
+        }
+      } else {
+        $('#node-input-collection').val('');
+        $('#node-input-method').val('');
+        $('#node-input-instanceProperty').val('');
+        $('#node-input-nativeNodeId').val('');
+        $('#node-input-nativeSensorId').val('');
+      }
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="set-topic">
+  <div class="form-row">
+    <label for="node-input-aloesNetwork"><i class="fa fa-globe"></i> <span data-i18n="aloes.label.aloesNetwork"></span></label>
+    <input type="text" id="node-input-aloesNetwork">
+  </div>
+
+  <div class="form-row">
+    <label style="width: auto;" for="node-input-useTopic"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.use-topic"></span>
+    </label>
+    <input style="width: 300px;" type="checkbox" id="node-input-useTopic">
+  </div>
+
+  <div class="form-row" id="node-row-topic" class="hide">
+    <label for="node-input-topic"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.topic"></span>
+    </label>
+    <input type="text" id="node-input-topic">
+  </div>
+
+  <div class="form-row" id="node-row-collection" class="hide">
+    <div class="form-row">
+      <label style="width: auto; margin-right: 1%;" for="node-input-collection"><i class="icon-tag"></i>
+        <span data-i18n="aloes.label.collection"></span>
+      </label>
+      <select id="node-input-collection" placeholder="#" style="width:25%; margin-right: 1%;">
+        <option value="Device" data-i18n="aloes.collection.device"></option>
+        <option value="Sensor" data-i18n="aloes.collection.sensor"></option>
+        <option value="Measurement" data-i18n="aloes.collection.measurement"></option>
+      </select>
+
+      <label style="width: auto; margin-right: 1%;" for="node-input-method"><i class="icon-tag"></i>
+        <span data-i18n="aloes.label.method"></span>
+      </label>
+      <select id="node-input-method" style="width:25%;">
+        <option value="GET" data-i18n="aloes.method.get"></option>
+        <option value="POST" data-i18n="aloes.method.post"></option>
+        <option value="PUT" data-i18n="aloes.method.put"></option>
+        <option value="DELETE" data-i18n="aloes.method.delete"></option>
+      </select>
+    </div>
+
+    <label style="width: auto; margin-right: 1%;" for="node-input-instanceProperty">
+      <span data-i18n="aloes.label.instance-prop"></span>
+    </label>
+    <input style="width: 25%; margin-right: 1%;" type="text" id="node-input-instanceProperty">
+
+    <div id="node-row-sensorDetails" class="hide">
+      <label style="width: auto; margin-right: 1%;" for="node-input-nativeNodeId">
+        <span data-i18n="aloes.label.native-node-id"></span>
+      </label>
+      <input style="width: 25%; margin-right: 1%;" type="text" id="node-input-nativeNodeId">
+      <label style="width: auto; margin-right: 1%;" for="node-input-nativeSensorId">
+        <span data-i18n="aloes.label.native-sensor-id"></span>
+      </label>
+      <input style="width: 25%;" type="text" id="node-input-nativeSensorId">
+    </div>
+  </div>
+</script>
