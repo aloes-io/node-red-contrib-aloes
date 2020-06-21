@@ -268,43 +268,51 @@ module.exports = function (RED) {
       done();
     };
 
-    this.get = async function (aloesNode, url) {
-      const { id } = aloesNode;
-      node.log(
-        RED._('aloes.state.send-request', {
-          server: node.serverUrl,
-        }),
-      );
+    function sendRequestLog(node, id) {
+      const text = RED._('aloes.state.send-request', {
+        server: node.serverUrl,
+      });
+      node.log(text);
       node.users[id].status({
         fill: 'yellow',
         shape: 'dot',
-        text: 'node-red:common.status.connecting',
+        text,
       });
+    }
 
+    function successResponseLog(node, id) {
+      const text = RED._('aloes.state.response-success', {
+        server: node.serverUrl,
+      });
+      node.log(text);
+      node.users[id].status({
+        fill: 'green',
+        shape: 'dot',
+        text,
+      });
+    }
+
+    function errorResponseLog(node, id) {
+      const text = RED._('aloes.state.response-error', {
+        server: node.serverUrl,
+      });
+      node.log(text);
+      node.users[id].status({
+        fill: 'red',
+        shape: 'ring',
+        text,
+      });
+    }
+
+    this.get = async function (aloesNode, url) {
+      const { id } = aloesNode;
       let result;
+      sendRequestLog(node, id);
       try {
         result = await node.http.get(url);
-        node.log(
-          RED._('aloes.state.response-success', {
-            server: node.serverUrl,
-          }),
-        );
-        node.users[id].status({
-          fill: 'green',
-          shape: 'dot',
-          text: 'node-red:common.status.connected',
-        });
+        successResponseLog(node, id);
       } catch (e) {
-        node.log(
-          RED._('aloes.state.response-error', {
-            server: node.serverUrl,
-          }),
-        );
-        node.users[id].status({
-          fill: 'red',
-          shape: 'ring',
-          text: 'node-red:common.status.disconnected',
-        });
+        errorResponseLog(node, id);
       } finally {
         return result;
       }
@@ -312,41 +320,13 @@ module.exports = function (RED) {
 
     this.post = async function (aloesNode, url, body) {
       const { id } = aloesNode;
-      node.log(
-        RED._('aloes.state.send-request', {
-          server: node.serverUrl,
-        }),
-      );
-      node.users[id].status({
-        fill: 'yellow',
-        shape: 'dot',
-        text: 'node-red:common.status.connecting',
-      });
-
       let result;
+      sendRequestLog(node, id);
       try {
         result = await node.http.post(url, body);
-        node.log(
-          RED._('aloes.state.response-success', {
-            server: node.serverUrl,
-          }),
-        );
-        node.users[id].status({
-          fill: 'green',
-          shape: 'dot',
-          text: 'node-red:common.status.connected',
-        });
+        successResponseLog(node, id);
       } catch (e) {
-        node.log(
-          RED._('aloes.state.response-error', {
-            server: node.serverUrl,
-          }),
-        );
-        node.users[id].status({
-          fill: 'red',
-          shape: 'ring',
-          text: 'node-red:common.status.disconnected',
-        });
+        errorResponseLog(node, id);
       } finally {
         return result;
       }
