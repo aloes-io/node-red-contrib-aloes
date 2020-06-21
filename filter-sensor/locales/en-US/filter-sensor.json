@@ -1,0 +1,13 @@
+{
+  "aloes": {
+    "label": {
+      "native-node-id": "Native node id",
+      "native-sensor-id": "Sensor Ids",
+      "sensor-type": "Sensor Type",
+      "sensor-resource": "Sensor Resource"
+    },
+    "errors": {
+      "missing-input": "Missing input"
+    }
+  }
+}

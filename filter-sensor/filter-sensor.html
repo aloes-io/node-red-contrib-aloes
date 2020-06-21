@@ -1,0 +1,57 @@
+<script type="text/javascript">
+  RED.nodes.registerType('filter-sensor', {
+    category: 'function',
+    color: '#77d1bf',
+    defaults: {
+      nativeNodeId: {
+        value: '',
+        required: false,
+      },
+      nativeSensorId: {
+        value: '',
+        required: false,
+      },
+      type: {
+        value: '',
+        required: false,
+      },
+      resource: {
+        value: '',
+        required: false,
+      },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'aloes-icon-min.svg',
+    label: function () {
+      return 'filter-sensor';
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="filter-sensor">
+  <div class="form-row">
+    <label for="node-input-nativeNodeId"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.native-node-id"></span>
+    </label>
+    <input type="text" id="node-input-nativeNodeId">
+  </div>
+  <div class="form-row">
+    <label for="node-input-nativeSensorId"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.native-sensor-id"></span>
+    </label>
+    <input type="text" id="node-input-nativeSensorId">
+  </div>
+  <div class="form-row">
+    <label for="node-input-type"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.sensor-type"></span>
+    </label>
+    <input type="text" id="node-input-type">
+  </div>
+  <div class="form-row">
+    <label for="node-input-resource"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.sensor-resource"></span>
+    </label>
+    <input type="text" id="node-input-resource">
+  </div>
+</script>
