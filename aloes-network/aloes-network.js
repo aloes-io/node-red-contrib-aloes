@@ -68,10 +68,47 @@ module.exports = function (RED) {
 
   async function getToken(node, credentials) {
     let token = await getFromGlobalContext(node, getAloesTokenName(node));
+    // todo handle case when token is not valid anymore
     if (!token || !token.id) {
       token = await login(node, credentials);
     }
     return token;
+  }
+
+  function sendRequestLog(node, id) {
+    const text = RED._('aloes.state.send-request', {
+      server: node.serverUrl,
+    });
+    node.log(text);
+    node.users[id].status({
+      fill: 'yellow',
+      shape: 'dot',
+      text,
+    });
+  }
+
+  function successResponseLog(node, id) {
+    const text = RED._('aloes.state.response-success', {
+      server: node.serverUrl,
+    });
+    node.log(text);
+    node.users[id].status({
+      fill: 'green',
+      shape: 'dot',
+      text,
+    });
+  }
+
+  function errorResponseLog(node, id) {
+    const text = RED._('aloes.state.response-error', {
+      server: node.serverUrl,
+    });
+    node.log(text);
+    node.users[id].status({
+      fill: 'red',
+      shape: 'ring',
+      text,
+    });
   }
 
   function AloesNetworkNode(config) {
@@ -267,42 +304,6 @@ module.exports = function (RED) {
       }
       done();
     };
-
-    function sendRequestLog(node, id) {
-      const text = RED._('aloes.state.send-request', {
-        server: node.serverUrl,
-      });
-      node.log(text);
-      node.users[id].status({
-        fill: 'yellow',
-        shape: 'dot',
-        text,
-      });
-    }
-
-    function successResponseLog(node, id) {
-      const text = RED._('aloes.state.response-success', {
-        server: node.serverUrl,
-      });
-      node.log(text);
-      node.users[id].status({
-        fill: 'green',
-        shape: 'dot',
-        text,
-      });
-    }
-
-    function errorResponseLog(node, id) {
-      const text = RED._('aloes.state.response-error', {
-        server: node.serverUrl,
-      });
-      node.log(text);
-      node.users[id].status({
-        fill: 'red',
-        shape: 'ring',
-        text,
-      });
-    }
 
     this.get = async function (aloesNode, url) {
       const { id } = aloesNode;

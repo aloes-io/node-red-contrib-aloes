@@ -236,6 +236,20 @@ const saveInstance = {
   [COLLECTIONS.MEASUREMENT.toLowerCase()]: async (node, storageKey, payload) => null,
 };
 
+function setStorageKey(msg) {
+  const { collection, deviceName, instanceProperty, nativeNodeId, nativeSensorId } = msg;
+  switch (collection) {
+    case COLLECTIONS.DEVICE:
+      return `device-${deviceName}`;
+    case COLLECTIONS.SENSOR:
+      return `sensor-${deviceName}-${instanceProperty}-${nativeNodeId}-${nativeSensorId}`;
+    case COLLECTIONS.MEASUREMENT:
+      return `measurement-${deviceName}-${instanceProperty}-${nativeNodeId}-${nativeSensorId}`;
+    default:
+      return null;
+  }
+}
+
 module.exports = {
   getFromGlobalContext,
   getKeysFromGlobalContext,
@@ -251,5 +265,6 @@ module.exports = {
   matchTopic,
   saveInstance,
   sendTo,
+  setStorageKey,
   setToGlobalContext,
 };

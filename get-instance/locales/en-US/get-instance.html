@@ -1,7 +1,7 @@
 <script type="text/html" data-help-name="get-instance">
   <p>A node to retrieve instance(s) from global context</p>
   <br>
-  <p>You can pass all inputs via UI, using string or env. variable (${your_variable}), or directly via the message (except deviceName).</p>
+  <p>You can pass all inputs via UI, using string or env. variable (${your_variable}).</p>
   <p>One of topic or collection must be provided.</p>
 
   <h3>Inputs</h3>
@@ -37,24 +37,30 @@
       <dl class="message-properties">
         <dt>payload <span class="property-type">object</span></dt>
         <dd>Device instance</dd>
-        <dt>topic <span class="property-type">string</span></dt>
-        <dd>Reusable topic pointing to the device instance</dd>
+        <dt>collection <span class="property-type">string</span></dt>
+        <dd>Aloes collection</dd>
+        <dt>instanceName <span class="property-type">string</span></dt>
+        <dd>Instance name used for storage</dd>
       </dl>
     </li>
     <li>Sensor
       <dl class="message-properties">
         <dt>payload <span class="property-type">object</span></dt>
         <dd>Sensor instance</dd>
-        <dt>topic <span class="property-type">string</span></dt>
-        <dd>Reusable topic pointing to the sensor instance</dd>
+        <dt>collection <span class="property-type">string</span></dt>
+        <dd>Aloes collection</dd>
+        <dt>instanceName <span class="property-type">string</span></dt>
+        <dd>Instance name used for storage</dd>
       </dl>
     </li>
     <li>Measurement
       <dl class="message-properties">
         <dt>payload <span class="property-type">object</span></dt>
         <dd>Measurement instance</dd>
-        <dt>topic <span class="property-type">string</span></dt>
-        <dd>Reusable topic pointing to the measurement instance</dd>
+        <dt>collection <span class="property-type">string</span></dt>
+        <dd>Aloes collection</dd>
+        <dt>instanceName <span class="property-type">string</span></dt>
+        <dd>Instance name used for storage</dd>
       </dl>
     </li>
   </ol>

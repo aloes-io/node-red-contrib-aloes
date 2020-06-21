@@ -7,6 +7,7 @@ module.exports = function (RED) {
     isValidCollection,
     isValidTopic,
     sendTo,
+    setStorageKey,
   } = require('../helpers');
 
   function GetInstance(config) {
@@ -28,27 +29,14 @@ module.exports = function (RED) {
       if (!getMany && ((!useTopic && !msg.collection) || (useTopic && !msg.topic))) {
         node.error(RED._('aloes.errors.missing-input'));
         return false;
-      } else if (msg.collection && !isValidCollection(msg.collection)) {
+      } else if (!useTopic && msg.collection && !isValidCollection(msg.collection)) {
         node.error(RED._('aloes.errors.invalid-collection'));
         return false;
-      } else if (msg.topic && !isValidTopic(msg.topic)) {
+      } else if (useTopic && msg.topic && !isValidTopic(msg.topic)) {
         node.error(RED._('aloes.errors.invalid-topic'));
         return false;
       }
       return true;
-    }
-
-    function setStorageKey(msg) {
-      switch (msg.collection) {
-        case COLLECTIONS.DEVICE:
-          return `device-${deviceName}`;
-        case COLLECTIONS.SENSOR:
-          return `sensor-${deviceName}-${msg.instanceProperty}-${msg.nativeNodeId}-${msg.nativeSensorId}`;
-        case COLLECTIONS.MEASUREMENT:
-          return `measurement-${deviceName}-${msg.instanceProperty}-${msg.nativeNodeId}-${msg.nativeSensorId}`;
-        default:
-          return null;
-      }
     }
 
     function setGlobs(msg) {
@@ -78,6 +66,49 @@ module.exports = function (RED) {
       return collection;
     }
 
+    async function getManyInstances(msg, send) {
+      const globs = setGlobs(msg);
+      const keys = await getKeysFromGlobalContext(node, globs);
+      const instances = await Promise.all(
+        keys.map(async (key) => {
+          try {
+            const payload = await getFromGlobalContext(node, key);
+            if (!payload) {
+              return null;
+            }
+            const collection = getCollection(key);
+            const type = collection.toLowerCase();
+            const instanceName = getInstanceName[type](payload);
+            const message = { ...msg, collection, instanceName, payload };
+            sendTo[type](send, message);
+            return message;
+          } catch (error) {
+            return null;
+          }
+        }),
+      );
+      if (!instances) {
+        node.error(RED._('aloes.errors.not-found'));
+      }
+    }
+
+    async function getOneInstance(msg, send) {
+      const type = msg.collection.toLowerCase();
+      const storageKey = setStorageKey(msg);
+      const payload = await getFromGlobalContext(node, storageKey);
+      if (payload) {
+        const message = {
+          ...msg,
+          collection: msg.collection,
+          instanceName: getInstanceName[type](payload),
+          payload,
+        };
+        sendTo[type](send, message);
+      } else {
+        node.error(RED._('aloes.errors.not-found'));
+      }
+    }
+
     node.on('input', async function (msg, send, done) {
       try {
         send =
@@ -86,6 +117,9 @@ module.exports = function (RED) {
             node.send.apply(node, arguments);
           };
 
+        if (deviceName) {
+          msg.deviceName = deviceName;
+        }
         if (topic) {
           msg.topic = topic;
         }
@@ -117,45 +151,9 @@ module.exports = function (RED) {
         }
 
         if (getMany) {
-          const globs = setGlobs(msg);
-          const keys = await getKeysFromGlobalContext(node, globs);
-
-          const instances = await Promise.all(
-            keys.map(async (key) => {
-              try {
-                const payload = await getFromGlobalContext(node, key);
-                if (!payload) {
-                  return null;
-                }
-                const collection = getCollection(key);
-                const type = collection.toLowerCase();
-                const instanceName = getInstanceName[type](payload);
-                const message = { collection, instanceName, payload };
-                sendTo[type](send, message);
-                return message;
-              } catch (error) {
-                return null;
-              }
-            }),
-          );
-
-          if (!instances) {
-            node.error(RED._('aloes.errors.not-found'));
-          }
+          await getManyInstances(msg, send);
         } else {
-          const type = msg.collection.toLowerCase();
-          const storageKey = setStorageKey(msg);
-          const payload = await getFromGlobalContext(node, storageKey);
-          if (payload) {
-            const message = {
-              collection: msg.collection,
-              instanceName: getInstanceName[type](payload),
-              payload,
-            };
-            sendTo[type](send, message);
-          } else {
-            node.error(RED._('aloes.errors.not-found'));
-          }
+          await getOneInstance(msg, send);
         }
 
         if (done) {

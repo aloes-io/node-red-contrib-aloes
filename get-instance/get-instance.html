@@ -7,7 +7,13 @@
         value: '',
         required: false,
         validate: function (v) {
-          if ($('#node-input-getMany').length && !$('#node-input-getMany').is(':checked') && !v) {
+          if (
+            $('#node-input-getMany').length &&
+            !$('#node-input-getMany').is(':checked') &&
+            $('#node-input-useTopic').length &&
+            !$('#node-input-useTopic').is(':checked') &&
+            !v
+          ) {
             return false;
           }
           return true;
@@ -96,11 +102,21 @@
     outputLabels: ['Device', 'Sensor', 'Measurement'],
     icon: 'aloes-icon-min.svg',
     label: function () {
-      return this.deviceName || 'get-instance';
+      if (this.topic) {
+        return this.topic;
+      } else if (this.getMany) {
+        return `get-many-${(this.collection && this.collection.toLowerCase()) || 'instances'}`;
+      } else if (this.collection) {
+        return `get-one-${this.collection.toLowerCase()}`;
+      }
+      return 'get-instance';
     },
     oneditprepare: function () {
       function updateSensorDetailsOptions() {
-        if ($('#node-input-collection').val() === 'Sensor') {
+        if (
+          $('#node-input-collection').val() === 'Sensor' ||
+          $('#node-input-collection').val() === 'Measurement'
+        ) {
           $('#node-row-sensorDetails').show();
         } else {
           $('#node-row-sensorDetails').hide();
@@ -111,23 +127,32 @@
         if ($('#node-input-useTopic').is(':checked')) {
           $('#node-row-topic').show();
           $('#node-row-collection').hide();
+          $('#node-input-deviceName').prop('required', false);
         } else {
           $('#node-row-topic').hide();
           $('#node-row-collection').show();
+          if (!$('#node-input-getMany').is(':checked')) {
+            $('#node-input-deviceName').prop('required', true);
+          } else {
+            $('#node-input-deviceName').prop('required', false);
+          }
         }
       }
 
       function updateGetManyOption() {
-        if ($('#node-input-getMany').is(':checked')) {
+        if ($('#node-input-getMany').is(':checked') || $('#node-input-useTopic').is(':checked')) {
           $('#node-input-deviceName').prop('required', false);
-        } else {
+        } else if (
+          !$('#node-input-getMany').is(':checked') &&
+          !$('#node-input-useTopic').is(':checked')
+        ) {
           $('#node-input-deviceName').prop('required', true);
         }
       }
 
       updateSensorDetailsOptions();
       updateTopicOption();
-      updateGetManyOption();
+      // updateGetManyOption();
 
       $('#node-input-collection').on('change', function () {
         updateSensorDetailsOptions();
@@ -151,6 +176,7 @@
           $('#node-input-nativeSensorId').val('');
         }
       } else {
+        $('#node-input-deviceName').val('');
         $('#node-input-collection').val('');
         $('#node-input-instanceProperty').val('');
         $('#node-input-nativeNodeId').val('');
