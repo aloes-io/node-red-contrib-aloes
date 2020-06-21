@@ -1,6 +1,13 @@
 module.exports = function (RED) {
   const { COLLECTIONS } = require('../constants');
-  const { getFromGlobalContext, isValidCollection, isValidTopic, sendTo } = require('../helpers');
+  const {
+    getFromGlobalContext,
+    getInstanceName,
+    getKeysFromGlobalContext,
+    isValidCollection,
+    isValidTopic,
+    sendTo,
+  } = require('../helpers');
 
   function GetInstance(config) {
     RED.nodes.createNode(this, config);
@@ -10,14 +17,15 @@ module.exports = function (RED) {
       deviceName,
       collection,
       useTopic,
+      getMany,
       topic,
-      sensorType,
+      instanceProperty,
       nativeNodeId,
       nativeSensorId,
     } = config;
 
     function inputsValid(msg) {
-      if ((!useTopic && !msg.collection) || (useTopic && !msg.topic)) {
+      if (!getMany && ((!useTopic && !msg.collection) || (useTopic && !msg.topic))) {
         node.error(RED._('aloes.errors.missing-input'));
         return false;
       } else if (msg.collection && !isValidCollection(msg.collection)) {
@@ -35,13 +43,41 @@ module.exports = function (RED) {
         case COLLECTIONS.DEVICE:
           return `device-${deviceName}`;
         case COLLECTIONS.SENSOR:
-          return `sensor-${deviceName}-${msg.sensorType}-${msg.nativeNodeId}-${msg.nativeSensorId}`;
+          return `sensor-${deviceName}-${msg.instanceProperty}-${msg.nativeNodeId}-${msg.nativeSensorId}`;
         case COLLECTIONS.MEASUREMENT:
-          return `measurement-${deviceName}-${msg.sensorType}-${msg.nativeNodeId}-${msg.nativeSensorId}`;
+          return `measurement-${deviceName}-${msg.instanceProperty}-${msg.nativeNodeId}-${msg.nativeSensorId}`;
         default:
           return null;
       }
     }
+
+    function setGlobs(msg) {
+      let glob = '';
+      if (msg.collection) {
+        glob += msg.collection.toLowerCase();
+      }
+      if (deviceName) {
+        if (!glob) {
+          glob += `*-${deviceName}`;
+        } else {
+          glob += `-${deviceName}`;
+        }
+      }
+      return [glob, `${glob}-*`];
+    }
+
+    function getCollection(key) {
+      let collection;
+      for (prop in COLLECTIONS) {
+        const refCollection = COLLECTIONS[prop];
+        if (key.startsWith(refCollection.toLowerCase())) {
+          collection = refCollection;
+          break;
+        }
+      }
+      return collection;
+    }
+
     node.on('input', async function (msg, send, done) {
       try {
         send =
@@ -50,16 +86,14 @@ module.exports = function (RED) {
             node.send.apply(node, arguments);
           };
 
-        // console.log({ deviceName, config, msg });
-
         if (topic) {
           msg.topic = topic;
         }
         if (collection) {
           msg.collection = collection;
         }
-        if (sensorType) {
-          msg.sensorType = sensorType;
+        if (instanceProperty) {
+          msg.instanceProperty = instanceProperty;
         }
         if (nativeNodeId) {
           msg.nativeNodeId = nativeNodeId;
@@ -76,19 +110,52 @@ module.exports = function (RED) {
           const parts = msg.topic.split('/');
           msg.collection = parts[1];
           if (msg.collection === COLLECTIONS.SENSOR) {
-            msg.sensorType = parts[3];
+            msg.instanceProperty = parts[3];
             msg.nativeNodeId = parts[4];
             msg.nativeSensorId = parts[5];
           }
         }
-        const type = msg.collection.toLowerCase();
-        const storageKey = setStorageKey(msg);
-        const instance = await getFromGlobalContext(node, storageKey);
-        if (instance) {
-          msg.payload = instance;
-          sendTo[type](send, msg);
+
+        if (getMany) {
+          const globs = setGlobs(msg);
+          const keys = await getKeysFromGlobalContext(node, globs);
+
+          const instances = await Promise.all(
+            keys.map(async (key) => {
+              try {
+                const payload = await getFromGlobalContext(node, key);
+                if (!payload) {
+                  return null;
+                }
+                const collection = getCollection(key);
+                const type = collection.toLowerCase();
+                const instanceName = getInstanceName[type](payload);
+                const message = { collection, instanceName, payload };
+                sendTo[type](send, message);
+                return message;
+              } catch (error) {
+                return null;
+              }
+            }),
+          );
+
+          if (!instances) {
+            node.error(RED._('aloes.errors.not-found'));
+          }
         } else {
-          node.error(RED._('aloes.errors.not-found'));
+          const type = msg.collection.toLowerCase();
+          const storageKey = setStorageKey(msg);
+          const payload = await getFromGlobalContext(node, storageKey);
+          if (payload) {
+            const message = {
+              collection: msg.collection,
+              instanceName: getInstanceName[type](payload),
+              payload,
+            };
+            sendTo[type](send, message);
+          } else {
+            node.error(RED._('aloes.errors.not-found'));
+          }
         }
 
         if (done) {

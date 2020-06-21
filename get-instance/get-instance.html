@@ -3,13 +3,23 @@
     category: 'storage',
     color: '#77d1bf',
     defaults: {
-      deviceName: { value: '', required: true },
+      deviceName: {
+        value: '',
+        required: false,
+        validate: function (v) {
+          if ($('#node-input-getMany').length && !$('#node-input-getMany').is(':checked') && !v) {
+            return false;
+          }
+          return true;
+        },
+      },
       topic: { value: '', required: false },
       collection: { value: '', required: false },
-      sensorType: { value: '', required: false },
+      instanceProperty: { value: '', required: false },
       nativeNodeId: { value: '', required: false },
       nativeSensorId: { value: '', required: false },
-      useTopic: { value: true, required: true },
+      useTopic: { value: false, required: true },
+      getMany: { value: false, required: true },
     },
     inputs: 1,
     outputs: 3,
@@ -28,18 +38,52 @@
         }
       }
 
+      function updateTopicOption() {
+        if ($('#node-input-useTopic').is(':checked')) {
+          $('#node-row-topic').show();
+          $('#node-row-collection').hide();
+        } else {
+          $('#node-row-topic').hide();
+          $('#node-row-collection').show();
+        }
+      }
+
+      function updateGetManyOption() {
+        if ($('#node-input-getMany').is(':checked')) {
+          $('#node-input-deviceName').prop('required', false);
+        } else {
+          $('#node-input-deviceName').prop('required', true);
+        }
+      }
+
       updateSensorDetailsOptions();
+      updateTopicOption();
+      updateGetManyOption();
 
       $('#node-input-collection').on('change', function () {
         updateSensorDetailsOptions();
+      });
+
+      $('#node-input-useTopic').on('click', function () {
+        updateTopicOption();
+      });
+
+      $('#node-input-getMany').on('click', function () {
+        updateGetManyOption();
       });
     },
 
     oneditsave: function () {
       if ($('#node-input-collection').val() !== 'Sensor') {
-        $('#node-input-sensorType').val('');
+        $('#node-input-instanceProperty').val('');
         $('#node-input-nativeNodeId').val('');
         $('#node-input-nativeSensorId').val('');
+      }
+      if (!$('#node-input-useTopic').is(':checked')) {
+        $('#node-input-topic').val('');
+      } else {
+        $('#node-input-collection').val('');
+        $('#node-input-instanceProperty').val('');
       }
     },
   });
@@ -52,30 +96,48 @@
   </div>
 
   <div class="form-row">
-    <label for="node-input-topic"><i class="icon-tag"></i><span data-i18n="aloes.label.topic"></span></label>
+    <label style="width: auto; margin-right: 1%;" for="node-input-useTopic"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.use-topic"></span>
+    </label>
+    <input style="width: 25%; margin-right: 1%;" type="checkbox" id="node-input-useTopic">
+    <label style="width: auto; margin-right: 1%" for="node-input-getMany"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.get-many"></span>
+    </label>
+    <input style="width: 25%;" type="checkbox" id="node-input-getMany">
+  </div>
+
+  <div class="form-row" id="node-row-topic" class="hide">
+    <label for="node-input-topic"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.topic"></span>
+    </label>
     <input type="text" id="node-input-topic">
   </div>
 
-  <div class="form-row">
-    <label for="node-input-collection"><i class="icon-tag"></i> <span data-i18n="aloes.label.collection"></label>
-      <select id="node-input-collection" placeholder="#"style="width:70%;">
-        <option value=""></option>
+  <div class="form-row" id="node-row-collection" class="hide">
+    <div class="form-row">
+      <label style="width: auto; margin-right: 1%;" for="node-input-collection"><i class="icon-tag"></i>
+        <span data-i18n="aloes.label.collection"></span>
+      </label>
+      <select id="node-input-collection" placeholder="#" style="width:25%; margin-right: 1%;">
         <option value="Device" data-i18n="aloes.collection.device"></option>
         <option value="Sensor" data-i18n="aloes.collection.sensor"></option>
         <option value="Measurement" data-i18n="aloes.collection.measurement"></option>
       </select>
-    <div id="node-row-sensorDetails" class="hide">
-      <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-sensorType"><span data-i18n="aloes.label.sensor-type"></span></label>
-      <input style="width: 300px;" type="text" id="node-input-sensorType">
-      <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-nativeNodeId"><span data-i18n="aloes.label.native-node-id"></span></label>
-      <input style="width: 300px;" type="text" id="node-input-nativeNodeId">
-      <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-nativeSensorId"><span data-i18n="aloes.label.native-sensor-id"></span></label>
-      <input style="width: 300px;" type="text" id="node-input-nativeSensorId">
     </div>
-  </div>
 
-  <div class="form-row">
-    <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-useTopic"><i class="icon-tag"></i><span data-i18n="aloes.label.use-topic"></span></label>
-    <input style="width: 300px;" type="checkbox" id="node-input-useTopic">
+    <div id="node-row-sensorDetails" class="hide">
+      <label style="width: auto; margin-right: 1%;" for="node-input-instanceProperty">
+        <span data-i18n="aloes.label.instance-prop"></span>
+      </label>
+      <input style="width: 25%; margin-right: 1%;" type="text" id="node-input-instanceProperty">
+      <label style="width: auto; margin-right: 1%;" for="node-input-nativeNodeId">
+        <span data-i18n="aloes.label.native-node-id"></span>
+      </label>
+      <input style="width: 25%; margin-right: 1%;" type="text" id="node-input-nativeNodeId">
+      <label style="width: auto; margin-right: 1%;" for="node-input-nativeSensorId">
+        <span data-i18n="aloes.label.native-sensor-id"></span>
+      </label>
+      <input style="width: 25%;" type="text" id="node-input-nativeSensorId">
+    </div>
   </div>
 </script>

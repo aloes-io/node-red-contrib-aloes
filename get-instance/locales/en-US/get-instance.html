@@ -1,7 +1,6 @@
 <script type="text/html" data-help-name="get-instance">
-  <p>A node to retrieve an instance from global context</p>
+  <p>A node to retrieve instance(s) from global context</p>
   <br>
-  <p>deviceName can be defined by an env variable (${your_variable}).</p>
   <p>You can pass all inputs via UI, using string or env. variable (${your_variable}), or directly via the message (except deviceName).</p>
   <p>One of topic or collection must be provided.</p>
 
@@ -13,14 +12,17 @@
     <dt>useTopic <span class="property-type">boolean</span></dt>
     <dd>Use the topic to generate storeKey</dd>
 
+    <dt>getMany <span class="property-type">boolean</span></dt>
+    <dd>Generate the storeKey as a glob string and retrieve every instance matching it</dd>
+
     <dt class="optional">topic <span class="property-type">string</span></dt>
     <dd>Topic to generate storeKey</dd>
 
     <dt class="optional">collection <span class="property-type">string</span></dt>
     <dd>Type of the instance</dd>
 
-    <dt class="optional">sensorType <span class="property-type">string</span></dt>
-    <dd>OMA Object Id of the sensor</dd>
+    <dt class="optional">instanceProperty <span class="property-type">string</span></dt>
+    <dd>Sensor's OMA Object Id or device's attribute</dd>
 
     <dt class="optional">nativeNodeId <span class="property-type">string</span></dt>
     <dd>Native Node Id of the sensor</dd>

@@ -3,10 +3,11 @@
     "label": {
       "name": "Name",
       "use-topic": "Use Topic",
+      "get-many": "Get Many",
       "topic": "Topic",
       "device-name": "Device name",
       "collection": "Aloes collection",
-      "sensor-type": "Sensor type",
+      "instance-prop": "Instance property",
       "native-node-id": "Native node Id",
       "native-sensor-id": "Native sensor Id"
     },
