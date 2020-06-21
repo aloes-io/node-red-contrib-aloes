@@ -37,6 +37,36 @@ const setToGlobalContext = (node, key, value) => {
   });
 };
 
+const getFromFlowContext = (node, key) => {
+  return new Promise((resolve, reject) => {
+    const flowContext = node.context().flow;
+    flowContext.get(key, (error, value) => (error ? reject(error) : resolve(value)));
+  });
+};
+
+const getKeysFromFlowContext = (node, globs) => {
+  return new Promise((resolve, reject) => {
+    const flowContext = node.context().flow;
+    flowContext.keys((error, keys) => {
+      if (error) {
+        reject(error);
+      } else if (globs && globs.length) {
+        const filteredKeys = keys.filter((key) => globs.some((glob) => minimatch(key, glob)));
+        resolve(filteredKeys);
+      } else {
+        resolve(keys);
+      }
+    });
+  });
+};
+
+const setToFlowContext = (node, key, value) => {
+  return new Promise((resolve, reject) => {
+    const flowContext = node.context().flow;
+    flowContext.set(key, value, (error) => (error ? reject(error) : resolve(value)));
+  });
+};
+
 function matchTopic(ts, t) {
   if (ts === '#') {
     return true;
@@ -258,7 +288,9 @@ function setStorageKey(msg) {
 
 module.exports = {
   getFromGlobalContext,
+  getFromFlowContext,
   getKeysFromGlobalContext,
+  getKeysFromFlowContext,
   getAloesTopic,
   getBrokerUrl,
   getDeviceName,
@@ -273,4 +305,5 @@ module.exports = {
   sendTo,
   setStorageKey,
   setToGlobalContext,
+  setToFlowContext,
 };
