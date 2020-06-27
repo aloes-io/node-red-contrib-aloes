@@ -1,5 +1,5 @@
 <script type="text/javascript">
-  RED.nodes.registerType('to-float', {
+  RED.nodes.registerType('to-number', {
     category: 'function',
     color: '#77d1bf',
     defaults: {
@@ -16,10 +16,10 @@
     inputs: 1,
     outputs: 1,
     inputLabels: 'Parameters',
-    outputLabels: 'Topic',
+    outputLabels: 'Sensor',
     icon: 'aloes-icon-min.svg',
     label: function () {
-      return 'to-float';
+      return 'to-number';
     },
     oneditprepare: function () {
       function updateTopicOption() {
@@ -48,7 +48,7 @@
   });
 </script>
 
-<script type="text/html" data-template-name="to-boolean">
+<script type="text/html" data-template-name="to-number">
   <div class="form-row">
     <label style="width: auto;" for="node-input-useTopic"><i class="icon-tag"></i>
       <span data-i18n="aloes.label.use-topic"></span>

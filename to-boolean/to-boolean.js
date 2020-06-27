@@ -46,7 +46,7 @@ module.exports = function (RED) {
           }
         }
 
-        let value = msg.payload.resources[resourceId];
+        let value = msg.payload.resources[resource];
         if (typeof value !== 'boolean') {
           // todo check when boolean might be an object
           if (typeof value === 'object' && value.type && value.data) {

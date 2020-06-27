@@ -47,7 +47,7 @@ module.exports = function (RED) {
           }
         }
 
-        let value = msg.payload.resources[resourceId];
+        let value = msg.payload.resources[resource];
         if (!Buffer.isBuffer(value)) {
           if (typeof value === 'string') {
             if (isUtf8(value)) {

@@ -1,7 +1,7 @@
 module.exports = function (RED) {
   const { isValidTopic } = require('../helpers');
 
-  function ToFloat(config) {
+  function ToNumber(config) {
     RED.nodes.createNode(this, config);
 
     const node = this;
@@ -46,7 +46,7 @@ module.exports = function (RED) {
           }
         }
 
-        let value = msg.payload.resources[resourceId];
+        let value = msg.payload.resources[resource];
         if (typeof value !== 'number') {
           // todo check when number might be an object
           if (typeof value === 'object' && value.type && value.data) {
@@ -100,5 +100,5 @@ module.exports = function (RED) {
       }
     });
   }
-  RED.nodes.registerType('to-float', ToFloat);
+  RED.nodes.registerType('to-number', ToNumber);
 };
