@@ -13,6 +13,7 @@
       "aloes-network": "aloes-network/aloes-network.js",
       "aloes-rx": "aloes-rx/aloes-rx.js",
       "aloes-tx": "aloes-tx/aloes-tx.js",
+      "extract-sensor-resources": "extract-sensor-resources/extract-sensor-resources.js",
       "filter-sensor": "filter-sensor/filter-sensor.js",
       "get-aloes-devices": "get-aloes-devices/get-aloes-devices.js",
       "get-instance": "get-instance/get-instance.js",
@@ -21,7 +22,7 @@
       "set-internal-topic": "set-internal-topic/set-internal-topic.js",
       "to-boolean": "to-boolean/to-boolean.js",
       "to-buffer": "to-buffer/to-buffer.js",
-      "to-float": "to-float/to-float.js",
+      "to-number": "to-number/to-number.js",
       "update-instance": "update-instance/update-instance.js"
     }
   },

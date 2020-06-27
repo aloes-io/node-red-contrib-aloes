@@ -1,0 +1,10 @@
+{
+  "aloes": {
+    "label": {
+      "sensor-ids": "Sensor Ids"
+    },
+    "errors": {
+      "missing-input": "Missing input"
+    }
+  }
+}
