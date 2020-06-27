@@ -6,6 +6,8 @@ module.exports = function (RED) {
     isValidMethod,
     saveInstance,
     sendTo,
+    setToGlobalContext,
+    getFromGlobalContext,
   } = require('../helpers');
 
   function SetInstance(config) {
@@ -54,6 +56,26 @@ module.exports = function (RED) {
       return storageKey;
     };
 
+    const addToDevicesList = async () => {
+      const devicesList = (await getFromGlobalContext(node, 'devicesList')) || [];
+      const index = devicesList.indexOf(deviceName);
+      if (index === -1) {
+        devicesList.push(deviceName);
+        await setToGlobalContext(node, 'devicesList', devicesList);
+      }
+    };
+
+    const removeFromDevicesList = async () => {
+      const devicesList = (await getFromGlobalContext(node, 'devicesList')) || [];
+      const index = devicesList.indexOf(deviceName);
+      if (index === -1) {
+        devicesList.splice(index, 1);
+        await setToGlobalContext(node, 'devicesList', devicesList);
+      }
+    };
+
+    addToDevicesList();
+
     node.on('input', async function (msg, send, done) {
       try {
         send =
@@ -90,6 +112,16 @@ module.exports = function (RED) {
 
         node.status({ fill: 'red', shape: 'ring', text: error.message || 'error' });
       }
+    });
+
+    node.on('close', function (removed, done) {
+      removeFromDevicesList()
+        .then(() => {
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
     });
   }
   RED.nodes.registerType('set-instance', SetInstance);

@@ -1,6 +1,6 @@
 {
   "name": "red-contrib-aloes",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Nodes to use Aloes data and events in Node-red",
   "scripts": {
     "lint": "npx eslint --ext js .",
