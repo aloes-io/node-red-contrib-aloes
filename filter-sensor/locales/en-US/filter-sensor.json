@@ -2,7 +2,7 @@
   "aloes": {
     "label": {
       "native-node-id": "Native node id",
-      "native-sensor-id": "Sensor Ids",
+      "native-sensor-id": "Native sensor id",
       "sensor-type": "Sensor Type",
       "sensor-resource": "Sensor Resource"
     },

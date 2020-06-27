@@ -1,6 +1,4 @@
 module.exports = function (RED) {
-  // const { getFromFlowContext } = require('../helpers.js');
-
   function FilterSensor(config) {
     RED.nodes.createNode(this, config);
 
@@ -26,8 +24,8 @@ module.exports = function (RED) {
         const conditions = {
           nativeNodeId: nativeNodeId || msg.nativeNodeId || null,
           nativeSensorId: nativeSensorId || msg.nativeSensorId || null,
-          sensorType: sensorType || msg.sensorType || null,
-          sensorResource: sensorResource || msg.sensorResource || null,
+          type: sensorType || msg.sensorType || null,
+          resource: sensorResource || msg.sensorResource || null,
         };
 
         if (!inputsValid(msg)) {
@@ -35,7 +33,7 @@ module.exports = function (RED) {
           return;
         }
 
-        console.log({ conditions: Object.entries(conditions) });
+        // console.log({ conditions: Object.entries(conditions) });
 
         if (
           Object.entries(conditions).every(([key, value]) =>
@@ -57,5 +55,6 @@ module.exports = function (RED) {
       }
     });
   }
+
   RED.nodes.registerType('filter-sensor', FilterSensor);
 };
