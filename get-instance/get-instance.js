@@ -87,9 +87,10 @@ module.exports = function (RED) {
           }
         }),
       );
-      if (!instances) {
-        node.error(RED._('aloes.errors.not-found'));
-      }
+      // if (!instances) {
+      //   node.error(RED._('aloes.errors.not-found'));
+      // }
+      return instances;
     }
 
     async function getOneInstance(msg, send) {
@@ -104,9 +105,10 @@ module.exports = function (RED) {
           payload,
         };
         sendTo[type](send, message);
-      } else {
-        node.error(RED._('aloes.errors.not-found'));
+        return payload;
       }
+      // node.error(RED._('aloes.errors.not-found'));
+      return null;
     }
 
     node.on('input', async function (msg, send, done) {

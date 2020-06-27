@@ -1,5 +1,5 @@
 {
-  "name": "red-contrib-aloes",
+  "name": "node-red-contrib-aloes",
   "version": "1.0.0",
   "description": "Nodes to use Aloes data and events in Node-red",
   "scripts": {
