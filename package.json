@@ -23,6 +23,7 @@
       "to-boolean": "to-boolean/to-boolean.js",
       "to-buffer": "to-buffer/to-buffer.js",
       "to-number": "to-number/to-number.js",
+      "to-string": "to-string/to-string.js",
       "update-instance": "update-instance/update-instance.js"
     }
   },

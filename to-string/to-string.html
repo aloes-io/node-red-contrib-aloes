@@ -1,0 +1,72 @@
+<script type="text/javascript">
+  RED.nodes.registerType('to-string', {
+    category: 'function',
+    color: '#77d1bf',
+    defaults: {
+      topic: {
+        value: '',
+        required: false,
+      },
+      resource: {
+        value: '',
+        required: false,
+      },
+      useTopic: { value: false, required: true },
+    },
+    inputs: 1,
+    outputs: 1,
+    inputLabels: 'Parameters',
+    outputLabels: 'Sensor',
+    icon: 'aloes-icon-min.svg',
+    label: function () {
+      return 'to-string';
+    },
+    oneditprepare: function () {
+      function updateTopicOption() {
+        if ($('#node-input-useTopic').is(':checked')) {
+          $('#node-row-topic').show();
+          $('#node-row-resource').hide();
+        } else {
+          $('#node-row-topic').hide();
+          $('#node-row-resource').show();
+        }
+      }
+
+      updateTopicOption();
+
+      $('#node-input-useTopic').on('change', function () {
+        updateTopicOption();
+      });
+    },
+    oneditsave: function () {
+      if (!$('#node-input-useTopic').is(':checked')) {
+        $('#node-input-topic').val('');
+      } else {
+        $('#node-input-resource').val('');
+      }
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="to-string">
+  <div class="form-row">
+    <label style="width: auto;" for="node-input-useTopic"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.use-topic"></span>
+    </label>
+    <input style="width: 300px;" type="checkbox" id="node-input-useTopic">
+  </div>
+
+  <div class="form-row" id="node-row-topic" class="hide">
+    <label for="node-input-topic"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.topic"></span>
+    </label>
+    <input type="text" id="node-input-topic">
+  </div>
+
+  <div class="form-row" id="node-row-resource" class="hide">
+    <label style="width: auto; margin-right: 1%;" for="node-input-resource">
+      <span data-i18n="aloes.label.resource"></span>
+    </label>
+    <input style="width: 25%;" type="text" id="node-input-resource">
+  </div>
+</script>

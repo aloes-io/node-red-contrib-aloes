@@ -1,0 +1,13 @@
+{
+  "aloes": {
+    "label": {
+      "use-topic": "Use topic",
+      "topic": "Topic",
+      "resource": "OMA resource Id"
+    },
+    "errors": {
+      "missing-input": "Missing input",
+      "invalid-topic": "Invalid topic"
+    }
+  }
+}
