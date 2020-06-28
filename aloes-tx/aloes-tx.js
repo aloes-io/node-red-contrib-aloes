@@ -21,10 +21,6 @@ module.exports = function (RED) {
 
     this.status({ fill: 'red', shape: 'ring', text: 'node-red:common.status.disconnected' });
 
-    // node.aloesConn.on('error', (e) => {
-    //   node.error()
-    // });
-
     function inputsValid(topic) {
       const [userId, collection, method] = topic.split('/');
       if (!node.aloesConn.userId || !userId || node.aloesConn.userId !== userId) {
@@ -41,11 +37,20 @@ module.exports = function (RED) {
     }
 
     node.aloesConn.on('ready', () => {
-      if (this.aloesConn.connected) {
-        node.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected' });
-      }
       node.aloesConn.register(node);
     });
+
+    // node.aloesConn.on('connected', () => {
+    //   node.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected' });
+    // });
+
+    // node.aloesConn.on('disconnected', () => {
+    //   node.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected' });
+    // });
+
+    // node.aloesConn.on('error', (e) => {
+    //   node.error(e);
+    // });
 
     this.on('input', function (msg, send, done) {
       if (msg.qos) {

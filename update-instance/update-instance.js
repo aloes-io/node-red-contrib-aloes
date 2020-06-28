@@ -69,7 +69,7 @@ module.exports = function (RED) {
         let payload;
         switch (msg.collection) {
           case COLLECTIONS.DEVICE:
-            if (!instance[msg.key] || instance[msg.key] === undefined) {
+            if (instance[msg.key] === undefined) {
               node.error(RED._('aloes.errors.invalid-key'));
               return null;
             }

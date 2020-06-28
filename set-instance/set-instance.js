@@ -1,5 +1,5 @@
 module.exports = function (RED) {
-  const { COLLECTIONS } = require('../constants');
+  const { COLLECTIONS, DEVICES_LIST } = require('../constants');
   const {
     getInstanceName,
     isValidCollection,
@@ -33,11 +33,6 @@ module.exports = function (RED) {
     const extractDeviceId = (msg) => {
       switch (msg.collection) {
         case COLLECTIONS.DEVICE:
-          if (msg.payload.status) {
-            node.status({ fill: 'green', shape: 'ring', text: 'online' });
-          } else {
-            node.status({ fill: 'yellow', shape: 'dot', text: 'offline' });
-          }
           return msg.payload.id.toString();
         case COLLECTIONS.SENSOR:
           return msg.payload.deviceId.toString();
@@ -57,22 +52,24 @@ module.exports = function (RED) {
     };
 
     const addToDevicesList = async () => {
-      const devicesList = (await getFromGlobalContext(node, 'devicesList')) || [];
+      const devicesList = (await getFromGlobalContext(node, DEVICES_LIST)) || [];
       const index = devicesList.indexOf(deviceName);
       if (index === -1) {
         devicesList.push(deviceName);
-        await setToGlobalContext(node, 'devicesList', devicesList);
+        await setToGlobalContext(node, DEVICES_LIST, devicesList);
       }
     };
 
     const removeFromDevicesList = async () => {
-      const devicesList = (await getFromGlobalContext(node, 'devicesList')) || [];
+      const devicesList = (await getFromGlobalContext(node, DEVICES_LIST)) || [];
       const index = devicesList.indexOf(deviceName);
       if (index === -1) {
         devicesList.splice(index, 1);
-        await setToGlobalContext(node, 'devicesList', devicesList);
+        await setToGlobalContext(node, DEVICES_LIST, devicesList);
       }
     };
+
+    node.status({ fill: 'yellow', shape: 'dot', text: 'offline' });
 
     addToDevicesList();
 
@@ -92,6 +89,13 @@ module.exports = function (RED) {
         const incomingDeviceId = extractDeviceId(msg);
 
         if (incomingDeviceId && deviceId === incomingDeviceId) {
+          if (msg.collection === COLLECTIONS.DEVICE) {
+            if (msg.payload.status) {
+              node.status({ fill: 'green', shape: 'ring', text: 'online' });
+            } else {
+              node.status({ fill: 'yellow', shape: 'dot', text: 'offline' });
+            }
+          }
           const type = msg.collection.toLowerCase();
           const storageKey = setStorageKey(msg, type);
           if (saveInstances) {

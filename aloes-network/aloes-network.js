@@ -343,6 +343,8 @@ module.exports = function (RED) {
           node.client.on('connect', function () {
             node.connecting = false;
             node.connected = true;
+            node.emit('connected');
+
             node.log(
               RED._('aloes.state.connected', {
                 broker: (node.clientid ? node.clientid + '@' : '') + node.brokerUrl,
@@ -402,6 +404,8 @@ module.exports = function (RED) {
 
           // Register disconnect handlers
           node.client.on('close', function () {
+            node.emit('close');
+
             if (node.connected) {
               node.connected = false;
               node.log(
@@ -432,7 +436,9 @@ module.exports = function (RED) {
 
           // Register connect error handler
           // The client's own reconnect logic will take care of errors
-          node.client.on('error', function (error) {});
+          node.client.on('error', function (error) {
+            node.emit('error', error);
+          });
         } catch (err) {
           console.log(err);
         }

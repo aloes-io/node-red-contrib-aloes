@@ -68,6 +68,7 @@ module.exports = function (RED) {
           } else if (typeof value === 'number') {
             msg.payload = Boolean(value);
           } else {
+            // console.log('to-boolean', { value });
             throw new Error('No value found');
           }
         } else {

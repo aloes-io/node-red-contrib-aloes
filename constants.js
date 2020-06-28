@@ -27,9 +27,15 @@ const CONNECTION_TYPES = {
   mqtt: 'mqtt',
 };
 
+const DEVICES_LIST = 'devicesList';
+
+const DEVICES_SELECTION = 'devicesSelection';
+
 module.exports = {
   COLLECTIONS,
   CONNECTION_TYPES,
+  DEVICES_LIST,
+  DEVICES_SELECTION,
   METHODS,
   LOGIN_ROUTE,
   PATHS,
