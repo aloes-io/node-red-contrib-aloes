@@ -6,11 +6,38 @@ module.exports = function (RED) {
     const { nativeNodeId, nativeSensorId, sensorType, sensorResource } = config;
 
     function inputsValid(msg) {
-      if (!msg.payload || !msg.payload.nativeSensorId || !msg.payload.resources) {
+      if (
+        !msg.payload ||
+        msg.payload.type === undefined ||
+        !msg.payload.nativeSensorId ||
+        !msg.payload.nativeNodeId ||
+        msg.payload.resource === undefined
+      ) {
         // invalid sensor
         return false;
       }
       return true;
+    }
+
+    function conditionsPassed(msg) {
+      const conditions = {
+        nativeNodeId: nativeNodeId || msg.nativeNodeId || null,
+        nativeSensorId: nativeSensorId || msg.nativeSensorId || null,
+        type: sensorType || msg.sensorType || null,
+        resource: sensorResource || msg.sensorResource || null,
+      };
+
+      // console.log({ conditions: Object.entries(conditions) });
+      return Object.entries(conditions).every(([key, value]) => {
+        if (value === null) return true;
+        if (value instanceof Array) {
+          return value.some((val) => msg.payload[key] == val);
+        }
+        if (value.startsWith('[') && value.endsWith(']')) {
+          return JSON.parse(value).some((val) => msg.payload[key] == val);
+        }
+        return msg.payload[key] == value;
+      });
     }
 
     node.on('input', function (msg, send, done) {
@@ -21,25 +48,14 @@ module.exports = function (RED) {
             node.send.apply(node, arguments);
           };
 
-        const conditions = {
-          nativeNodeId: nativeNodeId || msg.nativeNodeId || null,
-          nativeSensorId: nativeSensorId || msg.nativeSensorId || null,
-          type: sensorType || msg.sensorType || null,
-          resource: sensorResource || msg.sensorResource || null,
-        };
-
         if (!inputsValid(msg)) {
           done();
           return;
         }
 
-        // console.log({ conditions: Object.entries(conditions) });
+        const sensorIsValid = conditionsPassed(msg);
 
-        if (
-          Object.entries(conditions).every(([key, value]) =>
-            value === null ? true : msg.payload[key] == value,
-          )
-        ) {
+        if (sensorIsValid) {
           send(msg);
         }
 
