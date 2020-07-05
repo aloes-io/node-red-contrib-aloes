@@ -1,5 +1,6 @@
 module.exports = function (RED) {
-  const { COLLECTIONS, CONNECTION_TYPES, METHODS, PATHS } = require('../constants');
+  const { COLLECTIONS, CONNECTION_TYPES, HTTP_APIS, METHODS, PATHS } = require('../constants');
+  const { findDevices } = require('../gql-requests');
   const { getDeviceName, getSensorName, getAloesTopic } = require('../helpers');
 
   const setDeviceQueryUrl = ({ userId, path, includeSensors = false, limit = 50 }) => {
@@ -22,6 +23,7 @@ module.exports = function (RED) {
     this.connectionType = CONNECTION_TYPES.http;
     this.aloesNetwork = config.aloesNetwork;
     this.aloesConn = RED.nodes.getNode(this.aloesNetwork);
+    this.preferredApi = config.preferredApi || HTTP_APIS.graph;
 
     const node = this;
 
@@ -42,9 +44,23 @@ module.exports = function (RED) {
         const method = METHODS.HEAD; // "PUT"
         sensor.method = method;
 
-        if (includeSensorsResources) {
-          const resourcesUrl = `${PATHS.SENSOR}/${sensor.id}${PATHS.SENSOR_RESOURCES}`;
-          sensor.resources = (await node.aloesConn.get(node, resourcesUrl)) || {};
+        if (node.preferredApi === HTTP_APIS.rest && includeSensorsResources) {
+          if (includeSensorsResources) {
+            const resourcesUrl = `${PATHS.SENSOR}/${sensor.id}${PATHS.SENSOR_RESOURCES}`;
+            sensor.resources = (await node.aloesConn.get(node, resourcesUrl)) || {};
+          }
+        } else if (node.preferredApi === HTTP_APIS.graph && sensor.resources) {
+          // const resources = {};
+          Object.keys(sensor.resources).forEach((key) => {
+            if (key === '__typename') {
+              delete sensor.resources[key];
+            } else {
+              delete Object.assign(sensor.resources, { [key.slice(1)]: sensor.resources[key] })[
+                key
+              ];
+              // resources[key.slice(1)] = sensor.resources[key];
+            }
+          });
         }
 
         const topic = getAloesTopic({
@@ -133,23 +149,36 @@ module.exports = function (RED) {
             node.send.apply(node, arguments);
           };
 
-        // todo use graphql API for faster responses
-        const deviceUrl = setDeviceQueryUrl({
-          ...config,
-          path: PATHS.DEVICE,
-          userId: this.userId,
-        });
+        if (node.preferredApi === HTTP_APIS.rest) {
+          const deviceUrl = setDeviceQueryUrl({
+            ...config,
+            path: PATHS.DEVICE,
+            userId: this.userId,
+          });
 
-        node.status({
-          fill: 'yellow',
-          shape: 'dot',
-          text: 'node-red:common.status.connecting',
-        });
+          const devices = await node.aloesConn.get(node, deviceUrl);
+          if (devices && devices.length) {
+            const messages = await parseDevices(devices, { userId: this.userId, ...config });
+            messages.map(send);
+            node.status({ fill: 'gree', shape: 'ring', text: 'done' });
+          }
+        } else if (node.preferredApi === HTTP_APIS.graph) {
+          const { data: devicesTree } = await node.aloesConn.getGraph({
+            aloesNode: node,
+            query: findDevices,
+            variables: {
+              apiKey: node.aloesConn.tokenId,
+              ownerId: node.aloesConn.userId,
+              deviceLimit: 50,
+            },
+          });
 
-        const devices = await node.aloesConn.get(node, deviceUrl);
-        if (devices && devices.length) {
-          const messages = await parseDevices(devices, { userId: this.userId, ...config });
-          messages.map(send);
+          if (devicesTree && devicesTree.auth) {
+            let { devices, devicesCount } = devicesTree.auth;
+            const messages = await parseDevices(devices, { userId: this.userId, ...config });
+            messages.map(send);
+            node.status({ fill: 'gree', shape: 'ring', text: 'done' });
+          }
         }
 
         if (done) {

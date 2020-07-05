@@ -9,6 +9,9 @@
     <dt>aloesNetwork <span class="property-type">object</span></dt>
     <dd> Declare your Aloes instance configuration </dd>
 
+    <dt >preferredApi <span class="property-type">string</span></dt>
+    <dd> Choose which API on which the request will be executed (REST or GraphQL)</dd>
+
     <dt class="optional">includeSensors <span class="property-type">boolean</span></dt>
     <dd> Add sensors children to the devices</dd>
 
@@ -23,7 +26,7 @@
       <dl class="message-properties">
         <dt>payload <span class="property-type">object</span></dt>
         <dd>Device | Sensor | Measurement instance</dd>
-        
+
         <dt>topic <span class="property-type">string</span></dt>
         <dd>Reusable topic pointing to the instance</dd>
 

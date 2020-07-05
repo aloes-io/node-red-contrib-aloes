@@ -1,11 +1,11 @@
 <script type="text/javascript">
   RED.nodes.registerType('get-aloes-devices', {
     category: 'network',
-    // color: "#29abe2",
     color: '#77d1bf',
     defaults: {
       name: { value: '' },
       aloesNetwork: { type: 'aloes-network', required: true },
+      preferredApi: { value: '', required: true },
       includeSensors: {
         value: false,
         required: false,
@@ -35,6 +35,16 @@
   <div class="form-row">
     <label for="node-input-aloesNetwork"><i class="fa fa-globe"></i> <span data-i18n="aloes.label.aloesNetwork"></span></label>
     <input type="text" id="node-input-aloesNetwork">
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-preferredApi"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.preferredApi"></span>
+    </label>
+    <select id="node-input-preferredApi" >
+      <option value="rest" data-i18n="aloes.apis.rest"></option>
+      <option value="graph" data-i18n="aloes.apis.graph"></option>
+    </select>
   </div>
 
   <div class="form-row">

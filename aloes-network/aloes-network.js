@@ -12,7 +12,6 @@ module.exports = function (RED) {
 
   const interceptResErrors = (err) => {
     try {
-      // setLoading(false, err.config.uid || err.response.config.uid);
       err = Object.assign(new Error(), err.response.data.error);
     } catch (e) {
       // Will return err if something goes wrong
@@ -21,7 +20,6 @@ module.exports = function (RED) {
   };
 
   const interceptResponse = (res) => {
-    // setLoading(false, res.config.uid);
     try {
       return res.data;
     } catch (e) {
@@ -53,7 +51,7 @@ module.exports = function (RED) {
 
   async function login(node, { email, password }) {
     try {
-      const token = await node.http.post(LOGIN_ROUTE, {
+      const token = await node.http.post(`${node.httpApiRoot}${LOGIN_ROUTE}`, {
         email,
         password,
       });
@@ -305,12 +303,34 @@ module.exports = function (RED) {
       done();
     };
 
+    this.getGraph = async function ({ aloesNode, query, variables }) {
+      const { id } = aloesNode;
+      let result = {};
+      sendRequestLog(node, id);
+      try {
+        result = await node.http.post(`/graphql`, {
+          query,
+          variables,
+        });
+
+        if (result.errors && result.errors.length) {
+          throw new Error(result.errors[0].message);
+        }
+        successResponseLog(node, id);
+      } catch (e) {
+        errorResponseLog(node, id);
+      } finally {
+        return result;
+      }
+    };
+
     this.get = async function (aloesNode, url) {
       const { id } = aloesNode;
       let result;
       sendRequestLog(node, id);
       try {
-        result = await node.http.get(url);
+        // result = await node.http.get(url);
+        result = await node.http.get(`${node.httpApiRoot}${url}`);
         successResponseLog(node, id);
       } catch (e) {
         errorResponseLog(node, id);
@@ -324,7 +344,8 @@ module.exports = function (RED) {
       let result;
       sendRequestLog(node, id);
       try {
-        result = await node.http.post(url, body);
+        // result = await node.http.post(url, body);
+        result = await node.http.post(`${node.httpApiRoot}${url}`, body);
         successResponseLog(node, id);
       } catch (e) {
         errorResponseLog(node, id);

@@ -149,7 +149,7 @@ function getServerUrl(
       serverUrl = serverUrl + 'localhost:8000';
     }
   }
-  serverUrl += apiRoot;
+  // serverUrl += apiRoot;
   return { serverUrl, httpOptions };
 }
 

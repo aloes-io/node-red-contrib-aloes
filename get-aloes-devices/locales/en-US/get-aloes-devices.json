@@ -3,10 +3,15 @@
     "label": {
       "example": "localhost",
       "aloesNetwork": "Aloes network",
+      "preferredApi": "Preferred API",
       "includeSensors": "Include Sensors",
       "includeSensorsResources": "Inclue Sensors resources"
     },
     "tip": "Tip: Leave includeSensors or includeSensorsResources blank if you want to set them via msg properties.",
+    "apis": {
+      "rest": "REST",
+      "graph": "GraphQL"
+    },
     "errors": {
       "not-ready": "Aloes connection not ready",
       "invalid-topic": "Invalid topic",

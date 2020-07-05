@@ -27,6 +27,11 @@ const CONNECTION_TYPES = {
   mqtt: 'mqtt',
 };
 
+const HTTP_APIS = {
+  rest: 'rest',
+  graph: 'graph',
+};
+
 const DEVICES_LIST = 'devicesList';
 
 const DEVICES_SELECTION = 'devicesSelection';
@@ -36,6 +41,7 @@ module.exports = {
   CONNECTION_TYPES,
   DEVICES_LIST,
   DEVICES_SELECTION,
+  HTTP_APIS,
   METHODS,
   LOGIN_ROUTE,
   PATHS,
