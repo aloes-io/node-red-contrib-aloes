@@ -1,96 +1,7 @@
 const HttpsProxyAgent = require('https-proxy-agent');
-const minimatch = require('minimatch');
 const url = require('url');
-
-const { COLLECTIONS, METHODS } = require('./constants');
-
-const getFromGlobalContext = (node, key) => {
-  // todo get storage type from env ?
-  return new Promise((resolve, reject) => {
-    const globalContext = node.context().global;
-    globalContext.get(key, (error, value) => (error ? reject(error) : resolve(value)));
-  });
-};
-
-const getKeysFromGlobalContext = (node, globs) => {
-  // todo get storage type from env ?
-  return new Promise((resolve, reject) => {
-    const globalContext = node.context().global;
-    globalContext.keys((error, keys) => {
-      if (error) {
-        reject(error);
-      } else if (globs && globs.length) {
-        const filteredKeys = keys.filter((key) => globs.some((glob) => minimatch(key, glob)));
-        resolve(filteredKeys);
-      } else {
-        resolve(keys);
-      }
-    });
-  });
-};
-
-const setToGlobalContext = (node, key, value) => {
-  // todo get storage type from env ?
-  return new Promise((resolve, reject) => {
-    const globalContext = node.context().global;
-    globalContext.set(key, value, (error) => (error ? reject(error) : resolve(value)));
-  });
-};
-
-const getFromFlowContext = (node, key) => {
-  return new Promise((resolve, reject) => {
-    const flowContext = node.context().flow;
-    flowContext.get(key, (error, value) => (error ? reject(error) : resolve(value)));
-  });
-};
-
-const getKeysFromFlowContext = (node, globs) => {
-  return new Promise((resolve, reject) => {
-    const flowContext = node.context().flow;
-    flowContext.keys((error, keys) => {
-      if (error) {
-        reject(error);
-      } else if (globs && globs.length) {
-        const filteredKeys = keys.filter((key) => globs.some((glob) => minimatch(key, glob)));
-        resolve(filteredKeys);
-      } else {
-        resolve(keys);
-      }
-    });
-  });
-};
-
-const setToFlowContext = (node, key, value) => {
-  return new Promise((resolve, reject) => {
-    const flowContext = node.context().flow;
-    flowContext.set(key, value, (error) => (error ? reject(error) : resolve(value)));
-  });
-};
-
-function matchTopic(ts, t) {
-  if (ts === '#') {
-    return true;
-  } else if (ts.startsWith('$share')) {
-    /* The following allows shared subscriptions (as in MQTT v5)
-    http://docs.oasis-open.org/mqtt/mqtt/v5.0/cs02/mqtt-v5.0-cs02.html#_Toc514345522
-    4.8.2 describes shares like:
-    $share/{ShareName}/{filter}
-    $share is a literal string that marks the Topic Filter as being a Shared Subscription Topic Filter.
-    {ShareName} is a character string that does not include "/", "+" or "#"
-    {filter} The remainder of the string has the same syntax and semantics as a Topic Filter in a non-shared subscription. Refer to section 4.7.
-  */
-    ts = ts.replace(/^\$share\/[^#+/]+\/(.*)/g, '$1');
-  }
-  const re = new RegExp(
-    '^' +
-      ts
-        .replace(/([\[\]\?\(\)\\\\$\^\*\.|])/g, '\\$1')
-        .replace(/\+/g, '[^/]+')
-        .replace(/\/#$/, '(/.*)?') +
-      '$',
-  );
-  return re.test(t);
-}
+const { COLLECTIONS } = require('./constants');
+const { isValidCollection, isValidMethod } = require('./validators');
 
 function getServerUrl(
   { host = 'localhost', port = null, apiRoot = '/api', secure = false },
@@ -213,28 +124,6 @@ function getBrokerUrl({ host = 'localhost', port = null, secure = false }, prox,
   return { brokerUrl, wsOptions };
 }
 
-const isValidCollection = (collection) => Object.values(COLLECTIONS).includes(collection);
-
-const isValidMethod = (method) => Object.values(METHODS).includes(method);
-
-const isValidTopic = (topic) => {
-  const parts = topic.split('/');
-  const [, collection, method] = parts;
-  if (!collection || !method) {
-    return false;
-  }
-  if (!isValidCollection(collection) || !isValidMethod(method)) {
-    return false;
-  }
-  if (collection === COLLECTIONS.DEVICE && parts.length < 4) {
-    return false;
-  }
-  if (collection === COLLECTIONS.SENSOR && parts.length < 6) {
-    return false;
-  }
-  return true;
-};
-
 const getAloesTopic = ({ userId, method, collection, instanceId = null }) => {
   if (isValidCollection(collection) && isValidMethod(method)) {
     return instanceId
@@ -264,46 +153,12 @@ const sendTo = {
   [COLLECTIONS.MEASUREMENT.toLowerCase()]: (send, message) => send([null, null, message]),
 };
 
-const saveInstance = {
-  [COLLECTIONS.DEVICE.toLowerCase()]: async (node, storageKey, payload) =>
-    setToGlobalContext(node, `device-${storageKey}`, payload),
-  [COLLECTIONS.SENSOR.toLowerCase()]: async (node, storageKey, payload) =>
-    setToGlobalContext(node, `sensor-${storageKey}`, payload),
-  [COLLECTIONS.MEASUREMENT.toLowerCase()]: async (node, storageKey, payload) => null,
-};
-
-function setStorageKey(msg) {
-  const { collection, deviceName, instanceProperty, nativeNodeId, nativeSensorId } = msg;
-  switch (collection) {
-    case COLLECTIONS.DEVICE:
-      return `device-${deviceName}`;
-    case COLLECTIONS.SENSOR:
-      return `sensor-${deviceName}-${instanceProperty}-${nativeNodeId}-${nativeSensorId}`;
-    case COLLECTIONS.MEASUREMENT:
-      return `measurement-${deviceName}-${instanceProperty}-${nativeNodeId}-${nativeSensorId}`;
-    default:
-      return null;
-  }
-}
-
 module.exports = {
-  getFromGlobalContext,
-  getFromFlowContext,
-  getKeysFromGlobalContext,
-  getKeysFromFlowContext,
   getAloesTopic,
   getBrokerUrl,
   getDeviceName,
   getSensorName,
   getServerUrl,
   getInstanceName,
-  isValidCollection,
-  isValidMethod,
-  isValidTopic,
-  matchTopic,
-  saveInstance,
   sendTo,
-  setStorageKey,
-  setToGlobalContext,
-  setToFlowContext,
 };

@@ -1,14 +1,10 @@
 module.exports = function (RED) {
   const axios = require('axios');
   const mqtt = require('mqtt');
-  const { CONNECTION_TYPES, LOGIN_ROUTE } = require('../constants.js');
-  const {
-    getBrokerUrl,
-    getFromGlobalContext,
-    getServerUrl,
-    matchTopic,
-    setToGlobalContext,
-  } = require('../helpers.js');
+  const { CONNECTION_TYPES, LOGIN_ROUTE } = require('../constants');
+  const { getBrokerUrl, getServerUrl } = require('../helpers');
+  const { getFromGlobalContext, setToGlobalContext } = require('../storage');
+  const { matchTopic } = require('../validators');
 
   const interceptResErrors = (err) => {
     try {

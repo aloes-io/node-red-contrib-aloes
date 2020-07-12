@@ -1,6 +1,6 @@
 module.exports = function (RED) {
-  const { CONNECTION_TYPES } = require('../constants.js');
-  const { isValidCollection, isValidMethod } = require('../helpers.js');
+  const { CONNECTION_TYPES } = require('../constants');
+  const { isValidCollection, isValidMethod } = require('../validators');
 
   function AloesTxNode(config) {
     RED.nodes.createNode(this, config);

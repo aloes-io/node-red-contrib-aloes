@@ -1,6 +1,6 @@
 module.exports = function (RED) {
   const { aloesClientEncoder } = require('aloes-handlers');
-  const { isValidCollection, isValidMethod, isValidTopic } = require('../helpers');
+  const { isValidCollection, isValidMethod, isValidTopic } = require('../validators');
 
   function SetAloesTopic(config) {
     RED.nodes.createNode(this, config);

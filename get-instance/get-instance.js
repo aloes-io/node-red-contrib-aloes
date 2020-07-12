@@ -1,14 +1,15 @@
 module.exports = function (RED) {
   const { COLLECTIONS } = require('../constants');
+  const { sendTo } = require('../helpers');
   const {
     getFromGlobalContext,
-    getInstanceName,
+    getGlobalStorageType,
     getKeysFromGlobalContext,
-    isValidCollection,
-    isValidTopic,
-    sendTo,
     setStorageKey,
-  } = require('../helpers');
+  } = require('../storage');
+  const { isValidCollection, isValidTopic } = require('../validators');
+
+  const { settings } = RED;
 
   function GetInstance(config) {
     RED.nodes.createNode(this, config);
@@ -24,6 +25,7 @@ module.exports = function (RED) {
       nativeNodeId,
       nativeSensorId,
     } = config;
+    const storageType = getGlobalStorageType(settings);
 
     function inputsValid(msg) {
       if (!getMany && ((!useTopic && !msg.collection) || (useTopic && !msg.topic))) {
@@ -68,11 +70,11 @@ module.exports = function (RED) {
 
     async function getManyInstances(msg, send) {
       const globs = setGlobs(msg);
-      const keys = await getKeysFromGlobalContext(node, globs);
+      const keys = await getKeysFromGlobalContext(node, globs, storageType);
       const instances = await Promise.all(
         keys.map(async (key) => {
           try {
-            const payload = await getFromGlobalContext(node, key);
+            const payload = await getFromGlobalContext(node, key, storageType);
             if (!payload) {
               return null;
             }
@@ -96,7 +98,7 @@ module.exports = function (RED) {
     async function getOneInstance(msg, send) {
       const type = msg.collection.toLowerCase();
       const storageKey = setStorageKey(msg);
-      const payload = await getFromGlobalContext(node, storageKey);
+      const payload = await getFromGlobalContext(node, storageKey, storageType);
       if (payload) {
         const message = {
           ...msg,

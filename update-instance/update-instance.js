@@ -1,15 +1,16 @@
 module.exports = function (RED) {
   const { updateAloesSensors } = require('aloes-handlers');
   const { COLLECTIONS } = require('../constants');
+  const { getInstanceName, sendTo } = require('../helpers');
   const {
-    getInstanceName,
     getFromGlobalContext,
-    isValidCollection,
-    isValidTopic,
+    getGlobalStorageType,
     setStorageKey,
     saveInstance,
-    sendTo,
-  } = require('../helpers');
+  } = require('../storage');
+  const { isValidCollection, isValidTopic } = require('../validators');
+
+  const { settings } = RED;
 
   function UpdateInstance(config) {
     RED.nodes.createNode(this, config);
@@ -27,6 +28,7 @@ module.exports = function (RED) {
       nativeSensorId,
       saveInstances,
     } = config;
+    const storageType = getGlobalStorageType(settings);
 
     function inputsValid(msg) {
       const { deviceName, collection, topic, key, payload } = msg;
@@ -53,7 +55,7 @@ module.exports = function (RED) {
     async function getOneInstance(msg) {
       const type = msg.collection.toLowerCase();
       const storageKey = setStorageKey(msg);
-      const instance = await getFromGlobalContext(node, storageKey);
+      const instance = await getFromGlobalContext(node, storageKey, storageType);
       if (instance) {
         return {
           type,
@@ -159,7 +161,7 @@ module.exports = function (RED) {
         if (instance) {
           const payload = updateInstance(msg, instance);
           if (saveInstances) {
-            await saveInstance[type](node, instanceName, payload);
+            await saveInstance[type](node, instanceName, payload, storageType);
           }
           const message = { ...msg, instanceName, payload };
           sendTo[type](send, message);

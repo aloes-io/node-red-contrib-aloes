@@ -1,6 +1,6 @@
 module.exports = function (RED) {
   const { COLLECTIONS } = require('../constants');
-  const { isValidCollection, isValidMethod, isValidTopic } = require('../helpers');
+  const { isValidCollection, isValidMethod, isValidTopic } = require('../validators');
 
   function SetInternalTopic(config) {
     RED.nodes.createNode(this, config);

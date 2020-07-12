@@ -1,7 +1,8 @@
 module.exports = function (RED) {
   const isUtf8 = require('is-utf8');
   const { CONNECTION_TYPES } = require('../constants.js');
-  const { getInstanceName, isValidCollection, isValidMethod } = require('../helpers');
+  const { getInstanceName } = require('../helpers');
+  const { isValidCollection, isValidMethod } = require('../validators');
 
   function AloesRxNode(config) {
     RED.nodes.createNode(this, config);

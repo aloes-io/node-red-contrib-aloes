@@ -1,20 +1,22 @@
 module.exports = function (RED) {
   const { COLLECTIONS, DEVICES_LIST } = require('../constants');
+  const { getInstanceName, sendTo } = require('../helpers');
   const {
-    getInstanceName,
-    isValidCollection,
-    isValidMethod,
-    saveInstance,
-    sendTo,
-    setToGlobalContext,
     getFromGlobalContext,
-  } = require('../helpers');
+    getGlobalStorageType,
+    saveInstance,
+    setToGlobalContext,
+  } = require('../storage');
+  const { isValidCollection, isValidMethod, validateInstance } = require('../validators');
+
+  const { settings } = RED;
 
   function SetInstance(config) {
     RED.nodes.createNode(this, config);
 
     const node = this;
     const { deviceId, deviceName, saveInstances } = config;
+    const storageType = getGlobalStorageType(settings);
 
     function inputsValid(msg) {
       if (!msg.collection) {
@@ -52,7 +54,7 @@ module.exports = function (RED) {
     };
 
     const addToDevicesList = async () => {
-      const devicesList = (await getFromGlobalContext(node, DEVICES_LIST)) || [];
+      const devicesList = (await getFromGlobalContext(node, DEVICES_LIST, storageType)) || [];
       const index = devicesList.indexOf(deviceName);
       if (index === -1) {
         devicesList.push(deviceName);
@@ -61,11 +63,11 @@ module.exports = function (RED) {
     };
 
     const removeFromDevicesList = async () => {
-      const devicesList = (await getFromGlobalContext(node, DEVICES_LIST)) || [];
+      const devicesList = (await getFromGlobalContext(node, DEVICES_LIST, storageType)) || [];
       const index = devicesList.indexOf(deviceName);
       if (index === -1) {
         devicesList.splice(index, 1);
-        await setToGlobalContext(node, DEVICES_LIST, devicesList);
+        await setToGlobalContext(node, DEVICES_LIST, devicesList, storageType);
       }
     };
 
@@ -98,8 +100,9 @@ module.exports = function (RED) {
           }
           const type = msg.collection.toLowerCase();
           const storageKey = setStorageKey(msg, type);
+
           if (saveInstances) {
-            await saveInstance[type](node, storageKey, msg.payload);
+            await saveInstance[type](node, storageKey, msg.payload, storageType);
           }
           sendTo[type](send, msg);
         }

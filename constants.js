@@ -36,9 +36,12 @@ const DEVICES_LIST = 'devicesList';
 
 const DEVICES_SELECTION = 'devicesSelection';
 
+const DEFAULT_STORAGE = 'memoryOnly';
+
 module.exports = {
   COLLECTIONS,
   CONNECTION_TYPES,
+  DEFAULT_STORAGE,
   DEVICES_LIST,
   DEVICES_SELECTION,
   HTTP_APIS,

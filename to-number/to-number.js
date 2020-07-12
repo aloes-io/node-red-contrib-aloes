@@ -1,5 +1,5 @@
 module.exports = function (RED) {
-  const { isValidTopic } = require('../helpers');
+  const { isValidTopic } = require('../validators');
 
   function ToNumber(config) {
     RED.nodes.createNode(this, config);

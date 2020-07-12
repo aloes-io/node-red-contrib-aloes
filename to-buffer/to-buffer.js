@@ -1,6 +1,6 @@
 module.exports = function (RED) {
   const isUtf8 = require('is-utf8');
-  const { isValidTopic } = require('../helpers');
+  const { isValidTopic } = require('../validators');
 
   function ToBuffer(config) {
     RED.nodes.createNode(this, config);
