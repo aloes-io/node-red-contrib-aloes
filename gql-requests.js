@@ -21,7 +21,13 @@ query findDevices($apiKey: String!, $ownerId: String!, $deviceLimit: Int!) {
       transportProtocol
       transportProtocolVersion
       type
-      sensors {
+      sensors(
+        measurementFilter: {
+          limit: 10
+          order: ["ASC"]
+          # where: { rp: "0s" }
+        }
+      ) {
         # colors
         description
         devEui
@@ -47,6 +53,10 @@ query findDevices($apiKey: String!, $ownerId: String!, $deviceLimit: Int!) {
         resources {
           ...findResourcesByType
         }
+        #         measurements {
+        #           time
+        #           value
+        #         }
       }
       sensorsCount {
         count
@@ -69,44 +79,14 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-  }
-  ... on Altitude {
-    _5601
-    _5602
-    _5603
-    _5604
-    _5700
-    _5701
-    _5750
+    _5821
   }
   ... on Actuation {
     _5750
     _5850
     _5851
-    #_5852
+    _5852
     _5853
-  }
-  ... on AudioClip {
-    _5522
-    _5523
-    _5524
-    _5548
-    _5750
-  }
-  ... on AnalogInput {
-    _5600
-    _5601
-    _5602
-    _5603
-    _5604
-    _5605
-    _5750
-  }
-  ... on AnalogOutput {
-    _5603
-    _5604
-    _5650
-    _5750
   }
   ... on Accelerometer {
     _5603
@@ -124,6 +104,40 @@ fragment findResourcesByType on SensorResources {
     _5531
     _5545
     _5546
+    _5548
+    _5750
+    _5850
+  }
+  ... on Altitude {
+    _5601
+    _5602
+    _5603
+    _5604
+    _5700
+    _5701
+    _5750
+    _5821
+  }
+  ... on AnalogInput {
+    _5600
+    _5601
+    _5602
+    _5603
+    _5604
+    _5605
+    _5750
+  }
+  ... on AnalogOutput {
+    _5603
+    _5604
+    _5650
+    _5750
+  }
+  ... on AudioClip {
+    _5522
+    _5523
+    _5524
+    _5548
     _5750
   }
   ... on Barometer {
@@ -162,6 +176,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on Concentration {
     _5601
@@ -172,6 +187,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on Current {
     _5601
@@ -182,6 +198,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on Depth {
     _5601
@@ -192,6 +209,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on Distance {
     _5601
@@ -202,6 +220,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on Direction {
     _5601
@@ -240,6 +259,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on Gyrometer {
     _5508
@@ -314,6 +334,7 @@ fragment findResourcesByType on SensorResources {
     _5820
     _5850
     _5851
+    _5852
   }
   ... on Load {
     _5601
@@ -324,6 +345,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on Loudness {
     _5601
@@ -334,6 +356,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on LoadControl {
     _5750
@@ -379,6 +402,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on Positioner {
     _5519
@@ -400,6 +424,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on PowerControl {
     _5750
@@ -418,6 +443,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on PowerMeasurment {
     _5605
@@ -452,6 +478,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on PushButton {
     _5500
@@ -467,6 +494,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
   ... on RadioLinkFailureEvent {
     _1
@@ -508,6 +536,7 @@ fragment findResourcesByType on SensorResources {
     _5543
     _5544
     _5750
+    _5850
   }
   ... on UpDownControl {
     _5532
@@ -525,6 +554,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
+    _5821
   }
 }
 `;
