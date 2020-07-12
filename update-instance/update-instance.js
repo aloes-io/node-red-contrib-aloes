@@ -8,7 +8,7 @@ module.exports = function (RED) {
     setStorageKey,
     saveInstance,
   } = require('../storage');
-  const { isValidCollection, isValidTopic } = require('../validators');
+  const { isValidCollection, isValidTopic, validateInstance } = require('../validators');
 
   const { settings } = RED;
 
@@ -160,11 +160,19 @@ module.exports = function (RED) {
         const { instance, instanceName, type } = await getOneInstance(msg);
         if (instance) {
           const payload = updateInstance(msg, instance);
-          if (saveInstances) {
-            await saveInstance[type](node, instanceName, payload, storageType);
+
+          const { [type]: updatedPayload, isValid } = validateInstance[type](payload);
+          if (isValid) {
+            msg.payload = updatedPayload;
+            msg.instanceName = instanceName;
+            const storageKey = setStorageKey(msg, type);
+            if (saveInstances) {
+              await saveInstance[type](node, storageKey, msg.payload, storageType);
+            }
+            sendTo[type](send, msg);
+          } else {
+            node.error(`${type} instance #${updatedPayload.id} is not valid`);
           }
-          const message = { ...msg, instanceName, payload };
-          sendTo[type](send, message);
         } else {
           node.error(RED._('aloes.errors.not-found'));
         }

@@ -101,10 +101,16 @@ module.exports = function (RED) {
           const type = msg.collection.toLowerCase();
           const storageKey = setStorageKey(msg, type);
 
-          if (saveInstances) {
-            await saveInstance[type](node, storageKey, msg.payload, storageType);
+          const { [type]: updatedPayload, isValid } = validateInstance[type](msg.payload);
+          if (isValid) {
+            msg.payload = updatedPayload;
+            if (saveInstances) {
+              await saveInstance[type](node, storageKey, msg.payload, storageType);
+            }
+            sendTo[type](send, msg);
+          } else {
+            node.error(`${type} instance #${updatedPayload.id} is not valid`);
           }
-          sendTo[type](send, msg);
         }
 
         if (done) {
