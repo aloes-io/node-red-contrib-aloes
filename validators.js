@@ -83,9 +83,9 @@ const sensorSchema = {
     method: { type: 'string' },
     name: { type: 'string' },
     nativeNodeId: { type: ['null', 'string'] },
-    nativeResource: { type: 'string' },
     nativeSensorId: { type: 'string' },
-    nativeType: { type: 'string' },
+    nativeResource: { type: ['number', 'string'] },
+    nativeType: { type: ['number', 'string'] },
     outPrefix: { type: ['null', 'string'] },
     ownerId: { type: 'string' },
     resource: { type: 'number' },
@@ -179,6 +179,7 @@ const validateSensor = (sensor) => {
 const validateInstance = {
   device: (device) => validateDevice(device),
   sensor: (sensor) => validateSensor(sensor),
+  measurement: (measurement) => ({ isValid: true, measurement }),
 };
 
 module.exports = {
