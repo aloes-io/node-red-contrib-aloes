@@ -32,7 +32,7 @@ module.exports = function (RED) {
     }
 
     node.aloesConn.on('ready', () => {
-      this.userId = this.aloesConn.userId;
+      node.userId = node.aloesConn.userId;
       node.aloesConn.register(node);
     });
 
@@ -142,7 +142,10 @@ module.exports = function (RED) {
         if (!node.aloesConn || !node.aloesConn.ready) {
           throw new Error(RED._('aloes.errors.not-ready'));
         }
-
+        if (node.aloesConn.ready && !node.aloesConn.users[node.id]) {
+          node.aloesConn.register(node);
+        }
+        
         send =
           send ||
           function () {
@@ -196,7 +199,9 @@ module.exports = function (RED) {
     });
 
     node.on('close', function (removed, done) {
-      node.aloesConn.deregister(node, done);
+      if (node.aloesConn) {
+        node.aloesConn.deregister(node, done);
+      }
     });
   }
   RED.nodes.registerType('get-aloes-devices', GetAloesDevicesNode);

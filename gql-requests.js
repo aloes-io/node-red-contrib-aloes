@@ -79,13 +79,13 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on Actuation {
     _5750
     _5850
     _5851
-    _5852
+#     _5852
     _5853
   }
   ... on Accelerometer {
@@ -116,7 +116,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on AnalogInput {
     _5600
@@ -176,7 +176,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on Concentration {
     _5601
@@ -187,7 +187,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on Current {
     _5601
@@ -198,7 +198,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on Depth {
     _5601
@@ -209,7 +209,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on Distance {
     _5601
@@ -220,7 +220,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on Direction {
     _5601
@@ -259,7 +259,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on Gyrometer {
     _5508
@@ -345,7 +345,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on Loudness {
     _5601
@@ -356,7 +356,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on LoadControl {
     _5750
@@ -402,7 +402,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on Positioner {
     _5519
@@ -424,7 +424,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on PowerControl {
     _5750
@@ -443,7 +443,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on PowerMeasurment {
     _5605
@@ -478,7 +478,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on PushButton {
     _5500
@@ -494,7 +494,7 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
   ... on RadioLinkFailureEvent {
     _1
@@ -554,9 +554,10 @@ fragment findResourcesByType on SensorResources {
     _5700
     _5701
     _5750
-    _5821
+#     _5821
   }
 }
+
 `;
 
 module.exports = {

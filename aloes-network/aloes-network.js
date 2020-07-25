@@ -61,12 +61,9 @@ module.exports = function (RED) {
   }
 
   async function getToken(node, credentials) {
-    let token = await getFromGlobalContext(node, getAloesTokenName(node));
+    const token = await getFromGlobalContext(node, getAloesTokenName(node));
     // todo handle case when token is not valid anymore
-    if (!token || !token.id) {
-      token = await login(node, credentials);
-    }
-    return token;
+    return token && token.id ? token : login(node, credentials);
   }
 
   function sendRequestLog(node, id) {
@@ -249,6 +246,7 @@ module.exports = function (RED) {
             this.verifyservercert == 'true' || this.verifyservercert === true;
         }
         this.ready = true;
+        this.errored = false;
         this.emit('ready');
         node.log(
           RED._('aloes.state.login-success', {
@@ -257,6 +255,7 @@ module.exports = function (RED) {
         );
       })
       .catch((error) => {
+        this.ready = false;
         this.errored = true;
         this.emit('error', error);
         node.error(
@@ -272,10 +271,8 @@ module.exports = function (RED) {
     this.register = function (aloesNode) {
       node.users[aloesNode.id] = aloesNode;
       const { connectionType } = aloesNode;
-      if (connectionType === CONNECTION_TYPES.mqtt) {
-        if (Object.keys(node.users).length === 1) {
-          node.connect();
-        }
+      if (connectionType === CONNECTION_TYPES.mqtt && Object.keys(node.users).length === 1) {
+        node.connect();
       }
     };
 
@@ -524,9 +521,9 @@ module.exports = function (RED) {
     };
 
     this.on('close', async function (done) {
-      this.closing = true;
-      this.ready = false;
-      this.errored = false;
+      node.closing = true;
+      node.ready = false;
+      node.errored = false;
       delete node.http.defaults.headers.common.Authorization;
       delete node.http;
 
@@ -543,16 +540,16 @@ module.exports = function (RED) {
 
       await setToGlobalContext(node, getAloesTokenName(node), undefined);
 
-      if (this.connected) {
+      if (node.connected) {
         // Send close message
         if (node.closeMessage) {
           node.publish(node.closeMessage);
         }
-        this.client.once('close', function () {
+        node.client.once('close', function () {
           done();
         });
-        this.client.end();
-      } else if (this.connecting || node.client.reconnecting) {
+        node.client.end();
+      } else if (node.connecting || (node.client && node.client.reconnecting)) {
         node.client.end();
         done();
       } else {

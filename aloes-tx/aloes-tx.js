@@ -72,8 +72,8 @@ module.exports = function (RED) {
           }
 
           if (inputsValid(msg.topic)) {
-            this.log(`publish to ${msg.topic}`);
-            this.aloesConn.publish(msg, done);
+            node.log(`publish to ${msg.topic}`);
+            node.aloesConn.publish(msg, done);
           }
           done();
         } else {

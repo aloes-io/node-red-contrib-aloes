@@ -121,18 +121,18 @@ module.exports = function (RED) {
     }
 
     node.aloesConn.on('ready', () => {
-      const userId = this.aloesConn.userId;
-      this.topic = this.collection ? `${userId}/${this.collection}/#` : `${userId}/#`;
+      const userId = node.aloesConn.userId;
+      node.topic = node.collection ? `${userId}/${node.collection}/#` : `${userId}/#`;
 
-      if (!/^(#$|(\+|[^+#]*)(\/(\+|[^+#]*))*(\/(\+|#|[^+#]*))?$)/.test(this.topic)) {
-        return this.warn(RED._('aloes.errors.invalid-topic'));
+      if (!/^(#$|(\+|[^+#]*)(\/(\+|[^+#]*))*(\/(\+|#|[^+#]*))?$)/.test(node.topic)) {
+        return node.warn(RED._('aloes.errors.invalid-topic'));
       }
 
-      if (this.topic) {
-        node.aloesConn.register(this);
-        this.aloesConn.subscribe(this.topic, this.qos, messageCallback, this.id);
+      if (node.topic) {
+        node.aloesConn.register(node);
+        node.aloesConn.subscribe(node.topic, node.qos, messageCallback, node.id);
       } else {
-        this.error(RED._('aloes.errors.not-defined'));
+        node.error(RED._('aloes.errors.not-defined'));
       }
     });
 
