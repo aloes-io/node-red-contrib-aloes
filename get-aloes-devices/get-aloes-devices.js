@@ -145,7 +145,7 @@ module.exports = function (RED) {
         if (node.aloesConn.ready && !node.aloesConn.users[node.id]) {
           node.aloesConn.register(node);
         }
-        
+
         send =
           send ||
           function () {
