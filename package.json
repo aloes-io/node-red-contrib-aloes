@@ -14,6 +14,7 @@
       "aloes-rx": "aloes-rx/aloes-rx.js",
       "aloes-tx": "aloes-tx/aloes-tx.js",
       "extract-sensor-resources": "extract-sensor-resources/extract-sensor-resources.js",
+      "create-sensor": "create-sensor/create-sensor.js",
       "filter-sensor": "filter-sensor/filter-sensor.js",
       "get-aloes-devices": "get-aloes-devices/get-aloes-devices.js",
       "get-instance": "get-instance/get-instance.js",
@@ -30,6 +31,7 @@
   "dependencies": {
     "ajv": "^6.12.3",
     "aloes-handlers": "^1.3.2",
+    "aloes-light-handlers": "^1.1.1",
     "axios": "^0.19.2",
     "is-utf8": "^0.2.1",
     "minimatch": "^3.0.4",

@@ -1,0 +1,46 @@
+<script type="text/javascript">
+  RED.nodes.registerType('create-sensor', {
+    category: 'function',
+    color: '#77d1bf',
+    defaults: {
+      deviceName: {
+        value: '',
+        required: true,
+      },
+      protocol: {
+        value: 'aloeslight',
+        required: true,
+      },
+      topic: {
+        value: '',
+        required: false,
+      },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'aloes-icon-min.svg',
+    label: function () {
+      return 'create-sensor';
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="create-sensor">
+  <div class="form-row">
+    <label for="node-input-deviceName"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.device-name"></span>
+    </label>
+    <input type="text" id="node-input-deviceName">
+  </div>
+
+  <div class="form-row">
+    <label style="width: auto; margin-right: 1%;" for="node-input-protocol"><i class="icon-tag"></i>
+      <span data-i18n="aloes.label.protocol"></span>
+    </label>
+    <select id="node-input-protocol" placeholder="#" style="width:25%; margin-right: 1%;">
+      <option value=""></option>
+      <option value="aloeslight" data-i18n="aloes.protocol.aloes-light"></option>
+    </select>
+  </div>
+
+</script>

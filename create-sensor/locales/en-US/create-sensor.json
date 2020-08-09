@@ -1,0 +1,18 @@
+{
+  "aloes": {
+    "label": {
+      "device-name": "Device name",
+      "protocol": "Transport Protocol"
+    },
+    "protocol": {
+      "aloes": "Aloes",
+      "aloes-light": "Aloes light",
+      "my-sensors": "MySensors"
+    },
+    "errors": {
+      "device-not-found": "Device not found",
+      "sensor-not-created": "Sensor not created",
+      "missing-input": "Missing input"
+    }
+  }
+}
