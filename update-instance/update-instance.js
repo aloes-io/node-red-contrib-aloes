@@ -88,8 +88,8 @@ module.exports = function (RED) {
               node.error(RED._('aloes.errors.invalid-sensor'));
               return null;
             }
-            // sensor.method = msg.method;
-            // sensor.value = msg.payload;
+            sensor.method = msg.method || 'PUT';
+            sensor.value = msg.payload;
             sensor.lastSignal = new Date();
             payload = sensor;
             break;

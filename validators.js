@@ -97,6 +97,7 @@ const sensorSchema = {
       isValidResources: {},
       additionalProperties: true,
     },
+    value: { type: ['null', 'string', 'number', 'object', 'array'] },
   },
   required: [
     'devEui',
