@@ -37,10 +37,12 @@ module.exports = function (RED) {
         (useTopic && !topic) ||
         key === undefined ||
         key === null ||
-        payload === undefined ||
-        !deviceName
+        payload === undefined
       ) {
         node.error(RED._('aloes.errors.missing-input'));
+        return false;
+      } else if (!msg.deviceName) {
+        node.error(RED._('aloes.errors.missing-device-name'));
         return false;
       } else if (!useTopic && collection && !isValidCollection(collection)) {
         node.error(RED._('aloes.errors.invalid-collection'));
@@ -165,7 +167,7 @@ module.exports = function (RED) {
           if (isValid) {
             msg.payload = updatedPayload;
             msg.instanceName = instanceName;
-            const storageKey = setStorageKey(msg, type);
+            const storageKey = setStorageKey(msg);
             if (saveInstances) {
               await saveInstance[type](node, storageKey, msg.payload, storageType);
             }

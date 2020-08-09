@@ -8,6 +8,7 @@
       "collection": "Aloes Collection"
     },
     "errors": {
+      "missing-device-name": "Missing device name",
       "missing-collection": "Missing collection",
       "invalid-collection": "Invalid collection",
       "invalid-method": "Invalid method",

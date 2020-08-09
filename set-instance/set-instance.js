@@ -22,6 +22,9 @@ module.exports = function (RED) {
       if (!msg.collection) {
         node.error(RED._('aloes.errors.missing-collection'));
         return false;
+      } else if (msg.deviceName) {
+        node.error(RED._('aloes.errors.missing-device-name'));
+        return false;
       } else if (!isValidCollection(msg.collection)) {
         node.error(RED._('aloes.errors.invalid-collection'));
         return false;
@@ -47,10 +50,10 @@ module.exports = function (RED) {
 
     const setStorageKey = (msg, type) => {
       let storageKey = msg.instanceName || getInstanceName[type](msg.payload);
-      if (msg.collection !== COLLECTIONS.DEVICE) {
+      if (msg.collection.toLowerCase() !== COLLECTIONS.DEVICE.toLowerCase()) {
         storageKey = `${deviceName}-${storageKey}`;
       }
-      return storageKey;
+      return `${msg.collection.toLowerCase()}-${storageKey}`;
     };
 
     const addToDevicesList = async () => {
@@ -82,6 +85,10 @@ module.exports = function (RED) {
           function () {
             node.send.apply(node, arguments);
           };
+
+        if (deviceName) {
+          msg.deviceName = deviceName;
+        }
 
         if (!inputsValid(msg)) {
           done();

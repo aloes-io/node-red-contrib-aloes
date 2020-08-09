@@ -20,6 +20,7 @@
     },
     "errors": {
       "missing-input": "Missing input",
+      "missing-device-name": "Missing device name",
       "invalid-key": "Invalid key",
       "invalid-collection": "Invalid collection",
       "invalid-topic": "Invalid topic",

@@ -72,13 +72,13 @@ const saveInstance = {
     storageKey,
     payload,
     storageType = DEFAULT_STORAGE,
-  ) => setToGlobalContext(node, `device-${storageKey}`, payload, storageType),
+  ) => setToGlobalContext(node, storageKey, payload, storageType),
   [COLLECTIONS.SENSOR.toLowerCase()]: async (
     node,
     storageKey,
     payload,
     storageType = DEFAULT_STORAGE,
-  ) => setToGlobalContext(node, `sensor-${storageKey}`, payload, storageType),
+  ) => setToGlobalContext(node, storageKey, payload, storageType),
   [COLLECTIONS.MEASUREMENT.toLowerCase()]: async (
     node,
     storageKey,
