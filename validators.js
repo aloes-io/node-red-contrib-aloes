@@ -16,7 +16,7 @@ const deviceSchema = {
     frameCounter: { type: 'number' },
     icons: { type: 'array', items: { type: 'string' } },
     id: { type: 'string' },
-    lastSignal: { type: 'string' },
+    lastSignal: { type: ['null', 'string'] },
     messageProtocol: { type: 'string' },
     messageProtocolVersion: { type: ['null', 'string'] },
     name: { type: 'string' },
@@ -77,7 +77,7 @@ const sensorSchema = {
     icons: { type: 'array' },
     id: { type: 'string' },
     inPrefix: { type: ['null', 'string'] },
-    lastSignal: { type: ['null', 'string'] },
+    lastSignal: { type: ['null', 'string', 'object'] },
     messageProtocol: { type: 'string' },
     messageProtocolVersion: { type: ['null', 'string'] },
     method: { type: 'string' },
@@ -167,12 +167,18 @@ function matchTopic(ts, t) {
 const validateDevice = (device) => {
   const validate = ajv.compile(deviceSchema);
   const isValid = validate(device);
+  if (!isValid) {
+    console.log(validate.errors);
+  }
   return { isValid, device };
 };
 
 const validateSensor = (sensor) => {
   const validate = ajv.compile(sensorSchema);
   const isValid = validate(sensor);
+  if (!isValid) {
+    console.log(validate.errors);
+  }
   return { isValid, sensor };
 };
 

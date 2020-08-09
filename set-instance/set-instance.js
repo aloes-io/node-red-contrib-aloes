@@ -35,11 +35,11 @@ module.exports = function (RED) {
     const extractDeviceId = (msg) => {
       switch (msg.collection) {
         case COLLECTIONS.DEVICE:
-          return msg.payload.id.toString();
+          return msg.payload && msg.payload.id ? msg.payload.id.toString() : null;
         case COLLECTIONS.SENSOR:
-          return msg.payload.deviceId.toString();
+          return msg.payload && msg.payload.deviceId ? msg.payload.deviceId.toString() : null;
         case COLLECTIONS.MEASUREMENT:
-          return msg.payload.deviceId.toString();
+          return msg.payload && msg.payload.deviceId ? msg.payload.deviceId.toString() : null;
         default:
           return null;
       }
@@ -109,6 +109,7 @@ module.exports = function (RED) {
             }
             sendTo[type](send, msg);
           } else {
+            // console.log({ updatedPayload });
             node.error(`${type} instance #${updatedPayload.id} is not valid`);
           }
         }
