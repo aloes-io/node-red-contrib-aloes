@@ -41,7 +41,7 @@ module.exports = function (RED) {
       ) {
         node.error(RED._('aloes.errors.missing-input'));
         return false;
-      } else if (!msg.deviceName) {
+      } else if (!deviceName) {
         node.error(RED._('aloes.errors.missing-device-name'));
         return false;
       } else if (!useTopic && collection && !isValidCollection(collection)) {
