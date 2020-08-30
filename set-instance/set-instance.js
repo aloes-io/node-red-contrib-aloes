@@ -19,16 +19,17 @@ module.exports = function (RED) {
     const storageType = getGlobalStorageType(settings);
 
     function inputsValid(msg) {
-      if (!msg.collection) {
+      const { collection, deviceName, method } = msg;
+      if (!collection) {
         node.error(RED._('aloes.errors.missing-collection'));
         return false;
-      } else if (msg.deviceName) {
+      } else if (!deviceName) {
         node.error(RED._('aloes.errors.missing-device-name'));
         return false;
-      } else if (!isValidCollection(msg.collection)) {
+      } else if (!isValidCollection(collection)) {
         node.error(RED._('aloes.errors.invalid-collection'));
         return false;
-      } else if (!isValidMethod(msg.method)) {
+      } else if (!isValidMethod(method)) {
         node.error(RED._('aloes.errors.invalid-method'));
         return false;
       }
